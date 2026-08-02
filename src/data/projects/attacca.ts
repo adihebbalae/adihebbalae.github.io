@@ -54,6 +54,8 @@ const attacca: Project = {
   ],
 
   links: {
+    // Verified 200 on 2026-08-01. The marketplace's own product page.
+    live: 'https://adihebbalae.github.io/Attacca/',
     github: 'https://github.com/adihebbalae/Attacca',
   },
 

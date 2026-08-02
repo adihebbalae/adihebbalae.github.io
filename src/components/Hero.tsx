@@ -1,18 +1,26 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { motion } from 'framer-motion';
-import { useMode } from '@/lib/mode';
 
-const SUBTEXT = {
-  recruiter:
-    'Electrical and computer engineering at UT Austin. Video understanding research in the SWARM Lab.',
-  builder: 'I build things to find out how they work, then write down what broke.',
-};
+const SUBTEXT = 'I like building things and solving problems.';
 
 export default function Hero() {
   const [loaded, setLoaded] = useState(false);
-  const { mode } = useMode();
+  const [failed, setFailed] = useState(false);
+  const imgRef = useRef<HTMLImageElement>(null);
+
+  // Every visible thing in this header is gated on `loaded`, so anything that
+  // stops onLoad from firing leaves the hero blank rather than merely
+  // un-animated. Two ways that happens: a cached image can finish decoding
+  // before React attaches the handler, and a 404 fires onError instead. Check
+  // .complete on mount to cover the first, onError to cover the second.
+  useEffect(() => {
+    const img = imgRef.current;
+    if (!img?.complete) return;
+    if (img.naturalWidth === 0) setFailed(true);
+    setLoaded(true);
+  }, []);
 
   const scrollToAbout = () => {
     const el = document.getElementById('about');
@@ -27,12 +35,17 @@ export default function Hero() {
       {/* Background Image */}
       <div className="absolute inset-0">
         <img
+          ref={imgRef}
           src="/header.png"
           alt="Portfolio hero background featuring Adithya Hebbalae"
           className={`w-full h-full object-cover transition-all duration-[2000ms] ease-[cubic-bezier(.25,1,.30,1)] ${
-            loaded ? 'opacity-100 scale-100' : 'opacity-0 scale-105'
+            loaded && !failed ? 'opacity-100 scale-100' : 'opacity-0 scale-105'
           }`}
           onLoad={() => setLoaded(true)}
+          onError={() => {
+            setFailed(true);
+            setLoaded(true);
+          }}
           fetchPriority="high"
         />
         {/* Overlay */}
@@ -54,21 +67,30 @@ export default function Hero() {
           animate={loaded ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 1.5, ease: 'easeOut' }}
         >
-          <div className="relative inline-block px-6 py-4 md:px-10 md:py-5 -rotate-2" style={{ background: 'var(--color-primary)' }}>
-            {/* Shadow layer */}
+          <div className="relative inline-block">
+            {/* The offset accent. It has to be a SIBLING of the tilted box, not a
+                child of it: `-rotate-2` makes that box a stacking context, so a
+                child at -z-10 gets painted behind its own parent's background and
+                never appears at all. Sibling + DOM order needs no z-index. */}
             <span
-              className="absolute -top-1 -left-1 -right-1 -bottom-1 rotate-2 -z-10"
-              style={{ background: 'rgba(255, 0, 0, 0.4)' }}
+              aria-hidden="true"
+              className="absolute inset-0 -rotate-2 -translate-x-2 translate-y-2"
+              style={{ background: 'var(--color-quinary)', opacity: 0.55 }}
             />
-            <h1
-              className="text-4xl md:text-6xl lg:text-7xl font-bold text-white m-0"
-              style={{
-                fontFamily: 'var(--font-display)',
-                textShadow: '0 4px 24px rgba(0,0,0,0.7), 0 1px 2px rgba(0,0,0,0.6)',
-              }}
+            <div
+              className="relative px-6 py-4 md:px-10 md:py-5 -rotate-2"
+              style={{ background: 'var(--color-primary)' }}
             >
-              Hi, I&apos;m Adi
-            </h1>
+              <h1
+                className="text-4xl md:text-6xl lg:text-7xl font-bold text-white m-0"
+                style={{
+                  fontFamily: 'var(--font-display)',
+                  textShadow: '0 4px 24px rgba(0,0,0,0.7), 0 1px 2px rgba(0,0,0,0.6)',
+                }}
+              >
+                Hi, I&apos;m Adi
+              </h1>
+            </div>
           </div>
         </motion.div>
 
@@ -82,7 +104,7 @@ export default function Hero() {
             textShadow: '0 2px 12px rgba(0,0,0,0.5), 0 1px 2px rgba(0,0,0,0.4)',
           }}
         >
-          {SUBTEXT[mode]}
+          {SUBTEXT}
         </motion.p>
       </div>
 

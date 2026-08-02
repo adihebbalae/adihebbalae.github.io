@@ -1,7 +1,5 @@
 import type { Metadata, Viewport } from "next";
 import { Oswald, Montserrat } from "next/font/google";
-import { ModeProvider } from "@/lib/mode";
-import ModeScript from "@/components/ModeScript";
 import "./globals.css";
 
 // Self-hosted at build time, so there is no render-blocking request to
@@ -60,11 +58,8 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className={`${oswald.variable} ${montserrat.variable}`}>
-      <head>
-        <ModeScript />
-      </head>
       <body className="antialiased">
-        <ModeProvider>{children}</ModeProvider>
+        {children}
       </body>
     </html>
   );

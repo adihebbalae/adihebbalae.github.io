@@ -33,9 +33,13 @@ import findYourClub from './projects/find-your-club';
 // untouched fork of vishalsachdev/canvas-mcp (0 ahead, 138 behind); mcp-discord
 // is a local clone of goul4rt/mcp-discord. Zero commits by Adi in either.
 //
-// claude-usage-widget is a fork of SlavomirDurej/claude-usage-widget where his
-// 13 of 252 commits ARE real work (multi-account support, Win11 tray flyout).
-// Pending as a contribution entry, not a project entry.
+// claude-usage-widget IS listed, below, because the exclusion above does not
+// apply: it is a fork of SlavomirDurej/claude-usage-widget where his 13 of 252
+// commits are real work (multi-account support, a transparency skin, a Win11
+// tray flyout). It is entered as a contribution, not as his project — role is
+// 'Contributor' and upstream is credited in the first line of every copy
+// variant. Keep it that way.
+import claudeUsageWidget from './projects/claude-usage-widget';
 import texasPokerSite from './projects/texas-poker-site';
 import ece302Pcb from './projects/ece302-pcb';
 
@@ -58,6 +62,7 @@ export const projects: Project[] = [
   dOrganizer,
   courtalpha,
   findYourClub,
+  claudeUsageWidget,
   texasPokerSite,
   ece302Pcb,
 ];

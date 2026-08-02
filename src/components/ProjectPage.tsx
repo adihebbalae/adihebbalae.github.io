@@ -18,7 +18,11 @@ export default function ProjectPage({
   children?: React.ReactNode;
 }) {
   const { mode } = useMode();
-  const metrics = project.metrics.filter((m) => mode === 'recruiter' || !m.recruiterOnly);
+  // `recruiterOnly` used to hide credential-shaped numbers from builder mode.
+  // With one mode left, that filter would silently drop nine real metrics
+  // across six projects, so every metric shows. The flag stays on the type as
+  // a marker of which numbers read as resume filler if the tone ever slips.
+  const metrics = project.metrics;
 
   return (
     <main className="min-h-screen pt-28 pb-20 px-6 md:px-16 lg:px-24">

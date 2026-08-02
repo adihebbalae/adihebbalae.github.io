@@ -3,7 +3,6 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import Link from 'next/link';
-import ModeToggle from './ModeToggle';
 
 const navLinks = [
   { href: '/', label: 'Home' },
@@ -91,9 +90,6 @@ export default function Navbar() {
               </a>
             </li>
           ))}
-          <li>
-            <ModeToggle />
-          </li>
         </ul>
 
         {/* Mobile Hamburger */}
@@ -161,14 +157,6 @@ export default function Navbar() {
               ))}
             </ul>
 
-            <motion.div
-              initial={{ opacity: 0, x: -20 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ delay: 0.1 + navLinks.length * 0.05 }}
-              className="mt-12"
-            >
-              <ModeToggle />
-            </motion.div>
           </motion.div>
         )}
       </AnimatePresence>

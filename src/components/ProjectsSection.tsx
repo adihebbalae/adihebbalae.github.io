@@ -1,101 +1,38 @@
 'use client';
 
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ExternalLink, Github } from 'lucide-react';
+import { ArrowRight, ExternalLink, Github } from 'lucide-react';
 import Link from 'next/link';
-interface Project {
-  id: string;
-  title: string;
-  description: string;
-  tags: string[];
-  category: string[];
-  image?: string;
-  liveUrl?: string;
-  githubUrl?: string;
-  status: 'live' | 'complete' | 'in-progress';
-}
+import { projects } from '@/data';
+import type { Category, Project } from '@/data/types';
+import { useMode } from '@/lib/mode';
 
-const projects: Project[] = [
-  {
-    id: 'vision-learning',
-    title: 'Visionary: How Computers See',
-    description:
-      'An interactive educational website explaining Computer Vision through hands-on visualizations. Explore pixel matrices, CNN convolution filters, saliency maps, and watch a neural network train in real-time.',
-    tags: ['Next.js', 'TypeScript', 'Tailwind CSS', 'Framer Motion'],
-    category: ['ML/AI', 'Interactive', 'Web App'],
-    status: 'complete',
-  },
-  {
-    id: 'music-recommender',
-    title: 'Music Recommender System',
-    description:
-      'A multi-part ML project using CNNs, KNNs, and RNNs to classify and recommend music based on song metadata and audio timbre features. Built across four progressive Jupyter notebook sections.',
-    tags: ['Python', 'TensorFlow', 'Scikit-learn', 'Librosa'],
-    category: ['ML/AI'],
-    liveUrl: '/projects/music-recommender',
-    githubUrl: 'https://github.com/adihebbalae/adihebbalae-MusicRecommenders',
-    status: 'complete',
-  },
-  {
-    id: 'poker-ledger',
-    title: 'Poker Ledger',
-    description:
-      'A mobile-responsive poker game payout calculator. Configure buy-ins, track chip counts for any number of players, and instantly calculate net gains/losses with balance verification.',
-    tags: ['HTML', 'CSS', 'JavaScript'],
-    category: ['Web App'],
-    liveUrl: '/projects/poker-ledger',
-    githubUrl: 'https://github.com/adihebbalae/pokerledger2',
-    status: 'live',
-  },
-  {
-    id: 'name-that-song',
-    title: 'Name That Song',
-    description:
-      'A browser-based music guessing game across four genres: Classical, Country, Hip-Hop, and Pop. Listen to audio clips and test your music knowledge.',
-    tags: ['HTML', 'CSS', 'JavaScript'],
-    category: ['Interactive', 'Web App'],
-    liveUrl: '/projects/name-that-song',
-    githubUrl: 'https://github.com/adihebbalae/NameThatSong',
-    status: 'live',
-  },
-  {
-    id: 'valentines-day',
-    title: "Valentine's Day Proposal",
-    description:
-      'A creative proposal site disguised as an RSVP form. Features a dramatic reveal, a fleeing "No" button with 10 humorous rejection messages, and full-screen confetti on acceptance.',
-    tags: ['Next.js', 'TypeScript', 'Tailwind CSS'],
-    category: ['Web App'],
-    liveUrl: 'https://adihebbalae.github.io/vd-site/',
-    githubUrl: 'https://github.com/adihebbalae/vd-site',
-    status: 'live',
-  },
-  {
-    id: 'ai-notebooks',
-    title: 'AI / ML Experiments',
-    description:
-      'Standalone ML experiment notebooks covering NLP sentiment classification and computer vision. Includes model training, evaluation, and data visualization.',
-    tags: ['Python', 'TensorFlow', 'Scikit-learn', 'NLTK'],
-    category: ['ML/AI'],
-    liveUrl: '/projects/sentiment-demo',
-    githubUrl: 'https://github.com/adihebbalae/AI-stuff',
-    status: 'complete',
-  },
-  {
-    id: 'academic-website',
-    title: 'Professor Academic Portfolio',
-    description:
-      'A polished academic website for a professor in Child Neurology at the University of Louisville. Built with University of Louisville brand colors and responsive design.',
-    tags: ['HTML', 'CSS'],
-    category: ['Freelance'],
-    status: 'complete',
-  },
+/** Display order for the filter tabs. Only tabs with projects behind them show. */
+const CATEGORY_ORDER: Category[] = [
+  'Research',
+  'ML/AI',
+  'Developer Tools',
+  'Web App',
+  'Embedded',
+  'Civic',
+  'Interactive',
+  'Freelance',
 ];
 
-const allCategories = ['All', 'ML/AI', 'Web App', 'Interactive', 'Freelance'];
+const HEADER = {
+  recruiter: 'Shipped work',
+  builder: 'Building, learning, exploring',
+};
 
 export default function ProjectsSection() {
-  const [activeFilter, setActiveFilter] = useState('All');
+  const { mode } = useMode();
+  const [activeFilter, setActiveFilter] = useState<Category | 'All'>('All');
+
+  const categories = useMemo<(Category | 'All')[]>(() => {
+    const present = new Set(projects.flatMap((p) => p.category));
+    return ['All', ...CATEGORY_ORDER.filter((c) => present.has(c))];
+  }, []);
 
   const filteredProjects =
     activeFilter === 'All'
@@ -117,7 +54,7 @@ export default function ProjectsSection() {
             Projects
           </h2>
           <p className="text-sm uppercase tracking-[5px] text-[var(--color-secondary)] mt-2">
-            Building, learning, exploring
+            {HEADER[mode]}
           </p>
         </motion.div>
 
@@ -129,10 +66,11 @@ export default function ProjectsSection() {
           transition={{ duration: 0.5, delay: 0.1 }}
           className="flex flex-wrap justify-center gap-3 mb-12"
         >
-          {allCategories.map((cat) => (
+          {categories.map((cat) => (
             <button
               key={cat}
               onClick={() => setActiveFilter(cat)}
+              aria-pressed={activeFilter === cat}
               className={`px-5 py-2 text-xs uppercase tracking-widest font-medium border rounded-sm transition-all duration-200 cursor-pointer ${
                 activeFilter === cat
                   ? 'bg-[var(--color-primary)] text-white border-[var(--color-primary)]'
@@ -148,7 +86,7 @@ export default function ProjectsSection() {
         <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8">
           <AnimatePresence mode="popLayout">
             {filteredProjects.map((project, i) => (
-              <ProjectCard key={project.id} project={project} index={i} />
+              <ProjectCard key={project.slug} project={project} index={i} />
             ))}
           </AnimatePresence>
         </div>
@@ -157,7 +95,25 @@ export default function ProjectsSection() {
   );
 }
 
+const STATUS_STYLES: Record<Project['status'], string> = {
+  live: 'bg-green-500/10 text-green-600',
+  'in-progress': 'bg-yellow-500/10 text-yellow-600',
+  complete: 'bg-[var(--color-secondary)]/20 text-[var(--color-secondary)]',
+  archived: 'bg-[var(--color-tertiary)]/10 text-[var(--color-tertiary)]/55',
+};
+
+const STATUS_LABELS: Record<Project['status'], string> = {
+  live: '● Live',
+  'in-progress': '◐ In progress',
+  complete: '● Complete',
+  archived: '○ Archived',
+};
+
 function ProjectCard({ project, index }: { project: Project; index: number }) {
+  const { mode } = useMode();
+  const { live, github } = project.links;
+  const href = `/projects/${project.slug}`;
+
   return (
     <motion.article
       layout
@@ -172,30 +128,28 @@ function ProjectCard({ project, index }: { project: Project; index: number }) {
       <div className="absolute top-4 right-4 z-10">
         <span
           className={`text-[10px] uppercase tracking-widest font-bold px-3 py-1 rounded-sm ${
-            project.status === 'live'
-              ? 'bg-green-500/10 text-green-600'
-              : project.status === 'in-progress'
-              ? 'bg-yellow-500/10 text-yellow-600'
-              : 'bg-[var(--color-secondary)]/20 text-[var(--color-secondary)]'
+            STATUS_STYLES[project.status]
           }`}
         >
-          {project.status === 'live' ? '● Live' : project.status === 'in-progress' ? '◐ In Progress' : '● Complete'}
+          {STATUS_LABELS[project.status]}
         </span>
       </div>
 
       {/* Card Content */}
       <div className="p-6 flex flex-col flex-1">
-        <h3 className="text-xl font-bold uppercase text-[var(--color-tertiary)] mb-3 pr-20 leading-tight">
-          {project.title}
+        <h3 className="text-xl font-bold uppercase text-[var(--color-tertiary)] mb-3 pr-24 leading-tight">
+          <Link href={href} className="hover:text-[var(--color-primary)] transition-colors">
+            {project.title}
+          </Link>
         </h3>
 
         <p className="text-sm text-[var(--color-tertiary)]/70 leading-relaxed mb-5 flex-1">
-          {project.description}
+          {project.tagline[mode]}
         </p>
 
         {/* Tags */}
         <div className="flex flex-wrap gap-2 mb-5">
-          {project.tags.map((tag) => (
+          {project.tech.map((tag) => (
             <span
               key={tag}
               className="text-[11px] uppercase tracking-wider font-medium
@@ -207,38 +161,39 @@ function ProjectCard({ project, index }: { project: Project; index: number }) {
           ))}
         </div>
 
-        {/* Links */}
-        <div className="flex gap-3 mt-auto pt-4 border-t border-black/5">
-          {project.liveUrl && project.liveUrl.startsWith('/') ? (
-            <Link
-              href={project.liveUrl}
-              aria-label={`View live demo of ${project.title}`}
-              className="inline-flex items-center gap-2 text-xs uppercase tracking-widest font-medium
-                         text-[var(--color-primary)] hover:text-white
-                         border border-[var(--color-primary)] px-4 py-2 rounded-sm
-                         transition-all duration-200 hover:bg-[var(--color-primary)]"
-            >
-              <ExternalLink size={12} aria-hidden="true" />
-              Live Demo
-            </Link>
-          ) : project.liveUrl ? (
+        {/* Links. Every card links to its own page; external links are extra. */}
+        <div className="flex flex-wrap gap-3 mt-auto pt-4 border-t border-black/5">
+          <Link
+            href={href}
+            aria-label={`Read about ${project.title}`}
+            className="inline-flex items-center gap-2 text-xs uppercase tracking-widest font-medium
+                       text-[var(--color-primary)] hover:text-white
+                       border border-[var(--color-primary)] px-4 py-2 rounded-sm
+                       transition-all duration-200 hover:bg-[var(--color-primary)]"
+          >
+            <ArrowRight size={12} aria-hidden="true" />
+            Read more
+          </Link>
+
+          {live && (
             <a
-              href={project.liveUrl}
+              href={live}
               target="_blank"
               rel="noopener noreferrer"
-              aria-label={`View live demo of ${project.title}`}
+              aria-label={`Visit the live site for ${project.title}`}
               className="inline-flex items-center gap-2 text-xs uppercase tracking-widest font-medium
-                         text-[var(--color-primary)] hover:text-white
-                         border border-[var(--color-primary)] px-4 py-2 rounded-sm
-                         transition-all duration-200 hover:bg-[var(--color-primary)]"
+                         text-[var(--color-tertiary)] hover:text-white
+                         border border-[var(--color-tertiary)]/30 px-4 py-2 rounded-sm
+                         transition-all duration-200 hover:bg-[var(--color-tertiary)]"
             >
               <ExternalLink size={12} aria-hidden="true" />
-              Live Demo
+              Live
             </a>
-          ) : null}
-          {project.githubUrl && (
+          )}
+
+          {github && (
             <a
-              href={project.githubUrl}
+              href={github}
               target="_blank"
               rel="noopener noreferrer"
               aria-label={`View ${project.title} on GitHub`}

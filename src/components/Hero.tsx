@@ -1,23 +1,18 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { motion } from 'framer-motion';
+import { useMode } from '@/lib/mode';
 
-const subtexts = [
-  "Welcome to my digital space",
-  "Exploring the intersection of math and engineering",
-  "Turning ideas into reality through code",
-  "Building technology with purpose",
-  "Engineering meets creativity here",
-];
+const SUBTEXT = {
+  recruiter:
+    'Electrical and computer engineering at UT Austin. Video understanding research in the SWARM Lab.',
+  builder: 'I build things to find out how they work, then write down what broke.',
+};
 
 export default function Hero() {
-  const [subtext, setSubtext] = useState('');
   const [loaded, setLoaded] = useState(false);
-
-  useEffect(() => {
-    setSubtext(subtexts[Math.floor(Math.random() * subtexts.length)]);
-  }, []);
+  const { mode } = useMode();
 
   const scrollToAbout = () => {
     const el = document.getElementById('about');
@@ -81,13 +76,13 @@ export default function Hero() {
           initial={{ opacity: 0, y: 30 }}
           animate={loaded ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 1.5, delay: 1.2, ease: 'easeOut' }}
-          className="mt-6 text-lg md:text-xl text-white font-light tracking-wide"
+          className="mt-6 mx-auto max-w-[42rem] px-6 text-lg md:text-xl text-white font-light tracking-wide"
           style={{
             fontFamily: 'var(--font-display)',
             textShadow: '0 2px 12px rgba(0,0,0,0.5), 0 1px 2px rgba(0,0,0,0.4)',
           }}
         >
-          {subtext}
+          {SUBTEXT[mode]}
         </motion.p>
       </div>
 
@@ -100,7 +95,7 @@ export default function Hero() {
       >
         <button
           onClick={scrollToAbout}
-          aria-label="Scroll down to About Me section"
+          aria-label="Scroll down to the About me section"
           className="pointer-events-auto px-6 py-3 text-sm uppercase tracking-widest font-medium
                      text-white bg-[var(--color-primary)] border border-[var(--color-primary)]
                      rounded-sm cursor-pointer transition-all duration-200
@@ -108,7 +103,7 @@ export default function Hero() {
                      focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
           style={{ fontFamily: 'var(--font-primary)' }}
         >
-          About Me
+          About me
         </button>
       </motion.div>
     </header>

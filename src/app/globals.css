@@ -1,4 +1,3 @@
-@import url('https://fonts.googleapis.com/css2?family=Oswald:wght@300;400;500;600;700&family=Montserrat:wght@300;400;500;600;700&display=swap');
 @import "tailwindcss";
 
 /* ===== DESIGN TOKENS ===== */
@@ -12,8 +11,9 @@
   --color-quaternary: #1c1f2a;
   --color-quinary: #7f449a;
   --color-background: #faf0e6;
-  --font-primary: 'Oswald', sans-serif;
-  --font-display: 'Montserrat', sans-serif;
+  /* --font-oswald / --font-montserrat are set on <html> by next/font in layout.tsx */
+  --font-primary: var(--font-oswald), sans-serif;
+  --font-display: var(--font-montserrat), sans-serif;
 }
 
 /* ===== BASE ===== */

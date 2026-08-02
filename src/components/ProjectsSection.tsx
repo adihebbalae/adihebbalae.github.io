@@ -24,9 +24,7 @@ const projects: Project[] = [
       'An interactive educational website explaining Computer Vision through hands-on visualizations. Explore pixel matrices, CNN convolution filters, saliency maps, and watch a neural network train in real-time.',
     tags: ['Next.js', 'TypeScript', 'Tailwind CSS', 'Framer Motion'],
     category: ['ML/AI', 'Interactive', 'Web App'],
-    liveUrl: 'https://adihebbalae.github.io/vision-learning-site/',
-    githubUrl: 'https://github.com/adihebbalae/vision-learning-site',
-    status: 'live',
+    status: 'complete',
   },
   {
     id: 'music-recommender',
@@ -68,8 +66,8 @@ const projects: Project[] = [
       'A creative proposal site disguised as an RSVP form. Features a dramatic reveal, a fleeing "No" button with 10 humorous rejection messages, and full-screen confetti on acceptance.',
     tags: ['Next.js', 'TypeScript', 'Tailwind CSS'],
     category: ['Web App'],
-    liveUrl: 'https://adihebbalae.github.io/valentines-day-site/',
-    githubUrl: 'https://github.com/adihebbalae/valentines-day-site',
+    liveUrl: 'https://adihebbalae.github.io/vd-site/',
+    githubUrl: 'https://github.com/adihebbalae/vd-site',
     status: 'live',
   },
   {

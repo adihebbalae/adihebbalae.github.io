@@ -1,36 +1,58 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# adihebbalae.github.io
 
-## Getting Started
+Personal site and project portfolio for Adi Hebbalae — [adihebbalae.github.io](https://adihebbalae.github.io).
 
-First, run the development server:
+Next.js 16 App Router, statically exported and served from GitHub Pages.
+
+## Stack
+
+| Piece | Choice |
+|---|---|
+| Framework | Next.js 16 (App Router, Turbopack) |
+| Rendering | `output: "export"` — fully static, no server |
+| Styling | Tailwind CSS v4 + CSS custom properties in `globals.css` |
+| Animation | Framer Motion |
+| Icons | lucide-react |
+| Hosting | GitHub Pages via `.github/workflows/deploy.yml` |
+
+## Running locally
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+npm install
+npm run dev      # http://localhost:3000
+npm run build    # static export -> ./out
+npm run lint
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Layout
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```
+src/
+  app/
+    layout.tsx              # metadata, fonts, root shell
+    page.tsx                # home: Navbar > Hero > About > Projects > Footer
+    projects/<slug>/        # interactive per-project demo pages
+  components/
+    Navbar · Hero · AboutSection · ProjectsSection · Footer · ScrollToTop
+public/                     # images, favicon, .nojekyll
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+The project list is a single `projects` array at the top of
+`src/components/ProjectsSection.tsx`. Adding a project means adding one object
+there — a `liveUrl` starting with `/` renders as an internal `next/link`,
+anything else opens in a new tab.
 
-## Learn More
+## Deploying
 
-To learn more about Next.js, take a look at the following resources:
+Any push to `main` triggers the Pages workflow: build, upload `out/` as a Pages
+artifact, deploy. No manual step.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Conventions
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- **Every link must resolve.** Repo renames have silently broken project links
+  here before — verify a URL 200s before committing it.
+- Design tokens live as CSS variables in `globals.css`; use
+  `var(--color-primary)` and friends rather than hardcoding hex values.
+- Components that use hooks, Framer Motion, or browser APIs need `'use client'`.
+- Images are unoptimized by necessity (`next/image` optimization needs a server) —
+  compress before adding to `public/`.

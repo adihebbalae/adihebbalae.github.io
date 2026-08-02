@@ -34,10 +34,18 @@ export default function AboutSection() {
       <div className="grid grid-cols-1 lg:grid-cols-[1fr_34%] gap-12 lg:gap-24 items-center">
         {/* Left: Text Content */}
         <div className="relative">
-          {/* Red accent bar */}
-          <div className="absolute top-0 left-0 w-[15px] lg:w-[3.4vw] h-[62px] lg:h-[115px] bg-[var(--color-primary)]" />
+          {/* Red accent bar. It is absolutely positioned, and a positioned
+              element paints above static siblings no matter what the DOM order
+              is — so the text below has to be positioned too, or the bar covers
+              it. The padding then keeps them from overlapping visually: it has
+              to stay wider than the bar at BOTH breakpoints, which is what
+              lg:pl-0 got wrong while the bar grew to 3.4vw. */}
+          <div
+            aria-hidden="true"
+            className="absolute top-0 left-0 w-[15px] lg:w-[3.4vw] h-[62px] lg:h-[115px] bg-[var(--color-primary)]"
+          />
 
-          <div className="pl-8 lg:pl-0">
+          <div className="relative pl-8 lg:pl-[calc(3.4vw+2rem)]">
             <motion.h2
               initial={{ opacity: 0, y: 30 }}
               whileInView={{ opacity: 1, y: 0 }}

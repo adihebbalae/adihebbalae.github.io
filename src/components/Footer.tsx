@@ -28,7 +28,7 @@ export default function Footer() {
             Adithya Hebbalae
           </h2>
           <p className="text-white/70 text-sm md:text-base mb-8 max-w-md mx-auto">
-            Building, learning, and exploring — one project at a time.
+            Building, learning, and exploring, one project at a time.
           </p>
 
           {/* Social Links */}

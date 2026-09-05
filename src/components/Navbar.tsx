@@ -59,7 +59,7 @@ export default function Navbar() {
         <Link href="/" className="z-50 relative">
           <img
             src="/favicon.png"
-            alt="Adithya Hebbalae — Home"
+            alt="Adithya Hebbalae, home"
             className={`h-10 md:h-12 object-contain transition-all duration-300 ${
               !isScrolled && !isMobileOpen ? 'brightness-0 invert' : ''
             }`}

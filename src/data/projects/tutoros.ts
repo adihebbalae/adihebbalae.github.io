@@ -60,7 +60,7 @@ const tutoros: Project = {
       body:
         'Before a lesson, the tutor enters a topic. The app searches for resources and the tutor approves one, which the model turns into two versions of the same lesson plan, one written for the tutor and one written for the student, plus a problem set. Resource selection is approved, never auto-chosen.\n\n' +
         'During the lesson, the teaching surface is a Fabric.js canvas with the plan in a sidebar and KaTeX for the math. A share link opens the same lesson read-only on the student’s tablet with no login.\n\n' +
-        'After the lesson, the tutor writes two to five sentences. The model returns a structured summary, updates the student’s weak spots and proposes the next topic. That last step is the hinge — it is the only place anything writes back to the student profile, which is why it runs server-side with no bypass path.\n\n' +
+        'After the lesson, the tutor writes two to five sentences. The model returns a structured summary, updates the student’s weak spots and proposes the next topic. That last step is the hinge: it is the only place anything writes back to the student profile, which is why it runs server-side with no bypass path.\n\n' +
         'The debrief feeds the next prep. Everything else in the app existed to make that write happen without extra work from the tutor.',
     },
     {

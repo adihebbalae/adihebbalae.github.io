@@ -92,7 +92,7 @@ The privacy policy is a real document with a per-category table, and the manifes
 
 The rest is the unglamorous half of publishing: icons at three sizes, a permissions table that explains each request in plain language, a privacy policy a reviewer will actually read, an MIT license, a welcome page, and an uninstall URL pointing at a feedback page that asks a departing user for thirty seconds of why. That last one costs a single API call and it is the only moment someone who left will tell you anything. There is also a local sandbox with a mock service worker, so the whole flow can be tested without waiting for a live lecture.
 
-Seventeen commits across thirty-one tracked files, March 11 to April 20, 2026. The repo reached v1.0.3; the store listing was last updated to v1.0.2 on April 9, 2026. The listing is published under a solo handle, llamafx, rather than my name — a personal alias, not a company or a team.
+Seventeen commits across thirty-one tracked files, March 11 to April 20, 2026. The repo reached v1.0.3; the store listing was last updated to v1.0.2 on April 9, 2026. The listing is published under a solo handle, llamafx, rather than my name (a personal alias, not a company or a team).
 
 Forty-one people I have never met installed it and six of them rated it. That is a small number, and it is not one I could have generated myself.`,
     },

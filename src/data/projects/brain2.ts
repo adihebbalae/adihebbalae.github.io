@@ -40,7 +40,7 @@ const brain2: Project = {
     recruiter:
       'Cortex reads markdown that already exists on disk and puts all of it behind one local web UI. There is no database, no accounts and no hosted backend; it runs on localhost for a single user. React and Vite on the front, Express on the back, both TypeScript, with an optional Electron shell, an 11-tool MCP server, and optional local AI through Ollama. 80 commits, 286 tracked files and 66 Vitest test files, sole author, April to August 2026.',
     builder:
-      'Every personal dashboard I had tried wanted me to import my notes into it, and then the notes lived in two places. Cortex never owns the data — it parses the markdown that is already there and writes back into the original files, under an allowlist of eight paths it is permitted to touch. That constraint is the reason the feature count got as far as it did: once the blast radius was written down, everything after it was cheap to add.',
+      'Every personal dashboard I had tried wanted me to import my notes into it, and then the notes lived in two places. Cortex never owns the data: it parses the markdown that is already there and writes back into the original files, under an allowlist of eight paths it is permitted to touch. That constraint is the reason the feature count got as far as it did: once the blast radius was written down, everything after it was cheap to add.',
   },
 
   role: 'Sole developer',

@@ -104,7 +104,7 @@ Nine commits, merged through pull request #2. Neither the fork nor upstream has 
       heading: 'The skin and the tray flyout',
       body: `Two smaller additions. A "Liquid" skin gives the frameless window see-through translucency with a three-step transparency control, dark and light variants, and the usage colors left untouched so session, weekly, warning and danger states stay readable through the glass. The fidelity limit went into the commit message rather than being papered over: CSS backdrop-filter cannot sample the desktop behind a transparent window, and Windows Acrylic flattens when the window loses focus and will not combine with a transparent Electron window at all. So the skin uses unblurred translucency, and the transparency control exists to trade clarity against legibility.
 
-The other is a Windows 11 tray flyout — a second small window with a Mica backdrop that slides up from the tray icon, shows the two usage bars, and dismisses on blur. Mica arrives through Electron's backgroundMaterial option, which meant taking the app from Electron 28 to 33 and checking the rest of it against the upgrade before the flyout could land.`,
+The other is a Windows 11 tray flyout: a second small window with a Mica backdrop that slides up from the tray icon, shows the two usage bars, and dismisses on blur. Mica arrives through Electron's backgroundMaterial option, which meant taking the app from Electron 28 to 33 and checking the rest of it against the upgrade before the flyout could land.`,
     },
   ],
 };

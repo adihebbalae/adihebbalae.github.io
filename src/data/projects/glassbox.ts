@@ -2,8 +2,9 @@ import type { Project } from '@/data/types';
 
 /**
  * Facts, metrics and defect counts come from the private experience corpus record.
- * Nothing here may claim npm distribution, installs, or users — the package is
- * publish-ready and unpublished (registry 404, checked 2026-07-30).
+ * Nothing here may claim npm distribution, installs, or users: the package is
+ * publish-ready and unpublished (registry 404, checked 2026-07-30 and 2026-09-04).
+ * The source repo is public (github.com/adihebbalae/glassbox, since 2026-08-02).
  */
 const glassbox: Project = {
   slug: 'glassbox',
@@ -52,7 +53,7 @@ const glassbox: Project = {
     },
     {
       value: '14',
-      label: 'MCP tools — the same verb set the CLI exposes, over one daemon',
+      label: 'MCP tools, the same verb set the CLI exposes, over one daemon',
     },
     {
       value: '1',
@@ -94,13 +95,13 @@ Playwright owns browser launch, cleanup, actionability waiting, and input dispat
 
 So there is a debug plane under the observation layer. The style verb returns matched CSS rules in cascade order with computed specificity and a won-or-overridden mark per declaration. Glassbox calculates the specificity itself, because CDP does not ship it. Breakpoints resolve to the first valid location at or after the requested line, and a paused frame can be inspected, stepped, and evaluated against while sibling sessions keep working. Coverage reports count:0 for code that never ran, which separates a broken handler from a handler nothing calls.
 
-The listener check is the one I like most, because it started out wrong. Asked whether a button had a click handler, it used to answer "no event listeners (dead element)" — a confident, wrong verdict, since it had matched the first button in the DOM (a hidden mobile menu toggle) and had no idea React attaches its handlers at the root container. It now echoes the node it actually inspected, warns when the selector matched several, and checks ancestors for delegated listeners before calling anything dead.`,
+The listener check is the one I like most, because it started out wrong. Asked whether a button had a click handler, it used to answer "no event listeners (dead element)": a confident, wrong verdict, since it had matched the first button in the DOM (a hidden mobile menu toggle) and had no idea React attaches its handlers at the root container. It now echoes the node it actually inspected, warns when the selector matched several, and checks ancestors for delegated listeners before calling anything dead.`,
     },
     {
       heading: 'What dogfooding surfaced',
       body: `A verification tool that reports a false clean is worse than no tool, so before trusting it I pointed it at two applications I had already built: DegreeForge, a Vite/React app whose course map renders 233 nodes, and WCII, an Astro static site. Four adversarial passes across three days. Eighteen defects, all of them in Glassbox itself.
 
-Each one was graded on a single question: did it produce a wrong verdict or hide a real bug? The first was the worst. Glassbox reported a successful click on a zoom control no real pointer could reach, because a legend sat on top of it — and its own layout audit had already flagged that button as covered. The two halves of the tool contradicted each other, and the acting half was the one lying.
+Each one was graded on a single question: did it produce a wrong verdict or hide a real bug? The first was the worst. Glassbox reported a successful click on a zoom control no real pointer could reach, because a legend sat on top of it, and its own layout audit had already flagged that button as covered. The two halves of the tool contradicted each other, and the acting half was the one lying.
 
 The most useful defect corrected my own filing. Clipped screenshots were coming back framed on the wrong part of the page, but only after a summary element was clicked, so I filed it against a collapsed details element and a compositor state. Then I measured instead of patching. The real cause was a coordinate basis mismatch: DOM.getBoxModel answers in viewport coordinates while Page.captureScreenshot wants page coordinates, so every clip taken after any scroll was framed against the wrong origin. Clicking a summary scrolls it into view, which is the only reason details looked causal. scrollTo(0,1500) alone reproduces it on a page with no details element anywhere. The fix generalized to every clipped capture rather than to one element type, and the wrong diagnosis is still in the defect log, sitting above the correction.
 

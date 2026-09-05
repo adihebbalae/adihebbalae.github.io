@@ -15,7 +15,7 @@ const project: Project = {
     recruiter:
       'd-Organizer scans a directory, finds exact duplicates by SHA256 content hash, sorts files into a category tree, and moves them. Every move is written to a SQLite journal before it happens, so a whole run can be undone. It installs as a console script with one runtime dependency and makes no network calls. The scope was small on purpose, and it got finished.',
     builder:
-      'The problem is narrow: a Downloads folder holding the same PDF five times under five names, where nothing about the names tells you they match. Content hashes do. The harder half was trust — a tool that relocates thousands of a person’s files earns it by being reversible, so the journal and the undo command came before any of the work that made repeat scans fast.',
+      'The problem is narrow: a Downloads folder holding the same PDF five times under five names, where nothing about the names tells you they match. Content hashes do. The harder half was trust: a tool that relocates thousands of a person’s files earns it by being reversible, so the journal and the undo command came before any of the work that made repeat scans fast.',
   },
   role: 'Sole developer',
   period: 'Apr 2026 – May 2026',

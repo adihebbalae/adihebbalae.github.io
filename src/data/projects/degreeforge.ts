@@ -3,6 +3,7 @@ import type { Project } from '../types';
 /**
  * Source repo is private. Everything here is architecture and stack only:
  * no code, no screenshots, no file listings, no internal URLs.
+ * The app itself is public at degreeforge.org (confirmed 2026-08-28); link that.
  */
 const degreeforge: Project = {
   slug: 'degreeforge',
@@ -17,9 +18,9 @@ const degreeforge: Project = {
 
   summary: {
     recruiter:
-      'DegreeForge plans a four-year UT Austin ECE degree and optimizes the following semester’s schedule. Prerequisite validation runs on a deterministic TypeScript solver over a 382-node, 624-edge course graph, backed by a 3,181-course catalog and grade distributions for 306 courses. 1,794 test cases cover the solver, the data layer, and the interface. Sole developer, April to July 2026.',
+      'DegreeForge plans a four-year UT Austin ECE degree and optimizes the following semester’s schedule. Prerequisite validation runs on a deterministic TypeScript solver over a 382-node, 624-edge course graph, backed by a 3,181-course catalog and grade distributions for 306 courses. 1,794 test cases cover the solver, the data layer, and the interface. Sole developer since April 2026.',
     builder:
-      'ECE students plan four years in a spreadsheet and keep the prerequisite rules in their heads, so a bad choice in the fall shows up as a blocked course two years later. DegreeForge makes those rules executable: prerequisites compile to conjunctive normal form, plans are checked by topological order over the course graph, and Claude is confined to a chat panel that explains tradeoffs on a plan it cannot edit. The hard part was the data rather than the interface. It runs on localhost only, which was a scope decision and not an unfinished deployment.',
+      'ECE students plan four years in a spreadsheet and keep the prerequisite rules in their heads, so a bad choice in the fall shows up as a blocked course two years later. DegreeForge makes those rules executable: prerequisites compile to conjunctive normal form, plans are checked by topological order over the course graph, and Claude is confined to a chat panel that explains tradeoffs on a plan it cannot edit. The hard part was the data rather than the interface. It ran on localhost only through July as a scope decision; it is live at degreeforge.org now.',
   },
 
   role: 'Sole developer',
@@ -55,8 +56,8 @@ const degreeforge: Project = {
     { value: '342', label: 'Commits, April to July 2026, sole author', recruiterOnly: true },
   ],
 
-  // Private repo, no deployment. Nothing to link.
-  links: {},
+  // Source repo is private; the app is public.
+  links: { live: 'https://degreeforge.org' },
 
   sections: [
     {
@@ -77,7 +78,7 @@ const degreeforge: Project = {
     },
     {
       heading: 'What I would do differently',
-      body: 'The CNF rules are hand-authored, and only for the courses that appear in real ECE plans. Everything else falls back to a default-OR check, which is correct for the OR-pools that make up most multi-edge courses and would be wrong for an AND-stack nobody has encoded yet. That fallback holds today because the authored set covers the plans the tool is used for, and it is the first thing to break if someone points it at another major. The better design parses prerequisite text into CNF as a build step and keeps the hand-authored table only as an override for cases the parser gets wrong.\n\nThe docs drifted from the code. The README claimed 49 tests long after the suite had grown to 1,794, and listed grade distributions for 249 courses when the file held 306. Nothing in the app read those numbers, which is exactly why the drift went unnoticed for months. Counts that appear in prose should be generated from the artifacts they describe.\n\nAnd it has one user. Localhost-only was a deliberate scope decision that kept auth, hosting, and multi-tenancy out of a project whose value is the solver and the data. It also means every assumption about what a second student needs is untested. Handing an early version to a few classmates would have cost a weekend and would have told me which half of DegreeForge people actually use.',
+      body: 'The CNF rules are hand-authored, and only for the courses that appear in real ECE plans. Everything else falls back to a default-OR check, which is correct for the OR-pools that make up most multi-edge courses and would be wrong for an AND-stack nobody has encoded yet. That fallback holds today because the authored set covers the plans the tool is used for, and it is the first thing to break if someone points it at another major. The better design parses prerequisite text into CNF as a build step and keeps the hand-authored table only as an override for cases the parser gets wrong.\n\nThe docs drifted from the code. The README claimed 49 tests long after the suite had grown to 1,794, and listed grade distributions for 249 courses when the file held 306. Nothing in the app read those numbers, which is exactly why the drift went unnoticed for months. Counts that appear in prose should be generated from the artifacts they describe.\n\nIt ran on localhost only through July, a scope decision that kept auth, hosting and multi-tenancy out of a project whose value is the solver and the data. It also meant every assumption about what a second student needs went untested until it was deployed. It is live at degreeforge.org now, with an import hub for the sources a student already has and a privacy page.',
     },
   ],
 };

@@ -13,14 +13,14 @@ const pentris: Project = {
     recruiter:
       'A handheld game console running bare-metal C++ on a device with 160 KB of memory.',
     builder:
-      'Every feature was checked against a linker map. The audio path is a pile of resistors.',
+      'Every feature was checked against a linker map. Getting sound out meant desoldering an LED.',
   },
 
   summary: {
     recruiter:
       'Pentris is a pentomino falling-block game that runs on a hand-soldered handheld console with no operating system underneath it. Built with one teammate for ECE 319H at UT Austin, the firmware is roughly 2,850 lines of C++ on an MSPM0G3507. The shipped build uses 99,248 of 131,072 bytes of flash and 21,990 of 32,768 bytes of SRAM, verified against the linker map, and the soundtrack streams off an SD card because every loop is larger than the whole device.',
     builder:
-      'Everything interesting about this project came from the same place: the device is small and the things we wanted to put on it were not. Audio became a streaming problem because 187 to 488 KB loops cannot live in 128 KB of flash. Sound output became a resistor problem because the pins for the internal DAC were already spoken for. Two of us wrote it over about six weeks, reading the map file after every feature landed.',
+      'Everything interesting about this project came from the same place: the device is small and the things we wanted to put on it were not. Audio became a streaming problem because 187 to 488 KB loops cannot live in 128 KB of flash. Sound output became a pin-budget problem, because the converter we wanted shares its pin with an indicator LED, and we ended up taking the LED off the board to get it. Two of us wrote it over about six weeks, reading the map file after every feature landed.',
   },
 
   role: 'Co-developer (2-person team)',
@@ -36,7 +36,7 @@ const pentris: Project = {
     'Bare metal (no RTOS)',
     'Code Composer Studio',
     'Timer interrupts',
-    'R-2R DAC',
+    'Internal 12-bit DAC',
     'SPI',
     'ADC',
     'ST7735R TFT',
@@ -59,8 +59,8 @@ const pentris: Project = {
       label: 'Size of each soundtrack loop, on a device with 160 KB of ROM and RAM combined',
     },
     {
-      value: '5-bit',
-      label: 'R-2R resistor ladder driven from a timer ISR, standing in for the unavailable internal DAC',
+      value: '12-bit',
+      label: 'Internal DAC0 on PA15, driven from a timer ISR at 11,025 Hz, after we freed the pin the board had spent on an LED',
     },
     {
       value: '~2,850',
@@ -80,12 +80,14 @@ const pentris: Project = {
 
   sections: [
     {
-      heading: 'Why the audio path is a resistor ladder',
+      heading: 'We took an LED off the board to get better sound',
       body: `The console runs on a board the ECE 319H cohort designed together at a PCB camp in early 2026, and each student populated and soldered their own. That matters here, because the board is the reason the sound works the way it does.
 
-The MSPM0G3507 has an internal 12-bit DAC. We could not use it. On this board the pins it needs are taken by the LED driver and the IR receiver, so analog output had to come from somewhere else: five GPIO pins, PB0 through PB4, feeding a binary-weighted R-2R resistor ladder that sums to one voltage driving the speaker header, the headphone jack and the amplifier.
+The course's audio path is five GPIO pins, PB0 through PB4, feeding a binary-weighted R-2R resistor ladder that sums to one voltage driving the speaker. Five bits is 32 output levels, and how accurate those levels are depends on real resistor tolerances rather than on a spec sheet. That ladder is populated on our board and we started there.
 
-A timer interrupt writes a new 5-bit sample on every tick. Five bits is 32 output levels, and the accuracy of those levels depends on real resistor tolerances rather than on a spec sheet. It also puts sound quality inside the scheduler. If the ISR runs late, the pitch drifts, and there is no peripheral underneath to cover for you.`,
+The MSPM0G3507 also has an internal 12-bit DAC, which is 4,096 levels and no tolerance stack at all. Its output is PA15, and on this board PA15 is wired to indicator LED D1, so the pin was not ours to use. We desoldered D1 and cut its trace, which is a decision you cannot take back on a hand-soldered board with no spare. The remaining catch is that the LED driver's initialization sets PA15's pin mux back to GPIO, which silently kills the DAC, so LED_Init has to skip that pin: sound and the indicator LEDs cannot both exist here, and we chose sound.
+
+A timer interrupt writes a new 12-bit sample every tick at 11,025 Hz. That still puts sound quality inside the scheduler. If the ISR runs late the pitch drifts, and there is no peripheral underneath to cover for you.`,
     },
     {
       heading: 'Music larger than the machine it plays on',

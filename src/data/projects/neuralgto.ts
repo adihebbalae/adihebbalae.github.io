@@ -74,7 +74,7 @@ const neuralgto: Project = {
   sections: [
     {
       heading: 'Where the frequencies come from',
-      body: `A game theory optimal strategy is an equilibrium strategy for a two-player zero-sum game: play it and no opponent, however good, can exploit you over a long enough run. For no-limit hold’em that equilibrium is not something anyone can write down, so solvers approximate it with counterfactual regret minimization — repeatedly playing the game against itself, tracking how much each action would have regretted in hindsight, and shifting frequencies toward the actions it regretted least. Run enough iterations and the average strategy converges toward equilibrium.
+      body: `A game theory optimal strategy is an equilibrium strategy for a two-player zero-sum game: play it and no opponent, however good, can exploit you over a long enough run. For no-limit hold’em that equilibrium is not something anyone can write down, so solvers approximate it with counterfactual regret minimization: repeatedly playing the game against itself, tracking how much each action would have regretted in hindsight, and shifting frequencies toward the actions it regretted least. Run enough iterations and the average strategy converges toward equilibrium.
 
 That is a numerical procedure, and a language model asked to perform it directly will return plausible frequencies that were invented. Gemini on its own scored 86.5% against the PokerBench preflop set, which sounds respectable until you notice it cannot tell you which 13.5% it got wrong. NeuralGTO handles preflop by looking the answer up instead, matching each scenario against 1,108 pre-solved range files. That reached 88.5% on the 244 scenarios the tables covered. The lift over the model alone is two points, which was the surprising part of the evaluation. The real argument for the lookup is that when it fires, the number came out of a solver and can be pointed at.
 
@@ -84,7 +84,7 @@ Postflop there is nothing to look up. The tree is too large to pre-solve, so the
       heading: 'Multi-way pots and where the accuracy goes',
       body: `TexasSolver is a two-player solver. Real six-max hands reach the flop three and four players deep, and those spots have no equilibrium it can compute. The workaround is pairwise decomposition: break the multi-way spot into the heads-up matchups inside it, solve or look up each one, and reconcile the results into a single recommendation, with the language model synthesizing where the pairs disagree.
 
-That covers all 424 multi-way scenarios in the benchmark, and accuracy lands between 58% and 74.5% depending on the mode. The per-action breakdown is more useful than the headline. In heuristic-only mode the system is right 91.2% of the time when the answer is fold, 66.4% when it is raise, and 2.4% when it is call. Folding survives the decomposition — a hand behind in every pairwise matchup is behind in the pot. The call-versus-raise margin does not survive it, and that is where nearly all the error sits.`,
+That covers all 424 multi-way scenarios in the benchmark, and accuracy lands between 58% and 74.5% depending on the mode. The per-action breakdown is more useful than the headline. In heuristic-only mode the system is right 91.2% of the time when the answer is fold, 66.4% when it is raise, and 2.4% when it is call. Folding survives the decomposition: a hand behind in every pairwise matchup is behind in the pot. The call-versus-raise margin does not survive it, and that is where nearly all the error sits.`,
     },
     {
       heading: 'Running the whole thing for nothing',
@@ -100,7 +100,7 @@ The patches were 14 regexes rejecting shell metacharacters and injection pattern
     },
     {
       heading: 'What it does not do',
-      body: `This is a study tool. A solve takes one to six minutes, which rules out using it at a table even if that were the goal, and there is no bot and no live-play path. Game theory optimal means unexploitable, which is a different property from profitable — an equilibrium strategy declines to lose to a strong opponent rather than promising to beat a weak one. The output is an explanation of why a frequency is what it is.
+      body: `This is a study tool. A solve takes one to six minutes, which rules out using it at a table even if that were the goal, and there is no bot and no live-play path. Game theory optimal means unexploitable, which is a different property from profitable: an equilibrium strategy declines to lose to a strong opponent rather than promising to beat a weak one. The output is an explanation of why a frequency is what it is.
 
 The repo has not been touched since v1.0.0 in March 2026. The research thread that came out of it, using a language model to prune the CFR game tree before solving, targets 40 to 60% fewer solver iterations at under 5% strategy deviation. That is a hypothesis on a paused branch, not a result.`,
     },

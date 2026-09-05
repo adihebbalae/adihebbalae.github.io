@@ -34,7 +34,7 @@ const valentines: Project = {
   metrics: [
     {
       value: '10',
-      label: 'Rejection messages, cycled — a persistent no does eventually see them repeat',
+      label: 'Rejection messages, cycled (a persistent no does eventually see them repeat)',
     },
     {
       value: '1',

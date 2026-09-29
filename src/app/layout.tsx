@@ -1,26 +1,27 @@
 import type { Metadata, Viewport } from "next";
-import { Oswald, Montserrat } from "next/font/google";
+import { Oswald, Source_Serif_4 } from "next/font/google";
 import "./globals.css";
 
 // Self-hosted at build time, so there is no render-blocking request to
-// fonts.googleapis.com. globals.css maps these onto --font-primary and
-// --font-display, which is what every component already reads.
+// fonts.googleapis.com. globals.css maps these onto --font-display and
+// --font-body, which is what every component reads.
 const oswald = Oswald({
   subsets: ["latin"],
   display: "swap",
   variable: "--font-oswald",
 });
 
-const montserrat = Montserrat({
+const serif = Source_Serif_4({
   subsets: ["latin"],
   display: "swap",
-  variable: "--font-montserrat",
+  variable: "--font-serif",
+  style: ["normal", "italic"],
 });
 
 export const metadata: Metadata = {
   metadataBase: new URL('https://adihebbalae.github.io'),
   title: "Adithya Hebbalae",
-  description: "BS in Electrical and Computer Engineering at the University of Texas at Austin",
+  description: "Electrical and computer engineering at UT Austin. Undergraduate researcher in the SWARM Lab and co-author of CrossView (ECCV 2026).",
   alternates: {
     canonical: "https://adihebbalae.github.io/",
   },
@@ -32,13 +33,13 @@ export const metadata: Metadata = {
     type: "website",
     url: "https://adihebbalae.github.io/",
     title: "Adithya Hebbalae",
-    description: "BS in Electrical and Computer Engineering at the University of Texas at Austin",
+    description: "Electrical and computer engineering at UT Austin. Undergraduate researcher in the SWARM Lab and co-author of CrossView (ECCV 2026).",
     images: ["/header.png"],
   },
   twitter: {
     card: "summary_large_image",
     title: "Adithya Hebbalae",
-    description: "BS in Electrical and Computer Engineering at the University of Texas at Austin",
+    description: "Electrical and computer engineering at UT Austin. Undergraduate researcher in the SWARM Lab and co-author of CrossView (ECCV 2026).",
     images: ["/header.png"],
   },
   icons: {
@@ -57,7 +58,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={`${oswald.variable} ${montserrat.variable}`}>
+    <html lang="en" className={`${oswald.variable} ${serif.variable}`}>
       <body className="antialiased">
         {children}
       </body>

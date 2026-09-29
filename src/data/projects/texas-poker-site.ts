@@ -8,7 +8,7 @@ const project: Project = {
   slug: 'texas-poker-site',
   title: 'Texas Poker Club Site',
   tagline: {
-    recruiter: 'The public site for the 150+ member UT student club I co-founded. Astro on Cloudflare.',
+    recruiter: 'The public site for the UT student poker club I co-founded. Astro on Cloudflare.',
     builder: 'Static by default, React only where a page needed state, one Worker for the contact form.',
   },
   summary: {
@@ -33,7 +33,8 @@ const project: Project = {
     'Cloudflare KV',
   ],
   metrics: [
-    { value: '150+', label: 'Members in the club the site serves' },
+    { value: '60', label: 'People at the fall 2026 club info session' },
+    { value: '47', label: 'Players at the fall 2026 Intercollegiate Poker Association tryouts' },
     { value: '10', label: 'Lessons and posts published through the content collections' },
   ],
   links: {

@@ -59,7 +59,6 @@ const attacca: Project = {
     github: 'https://github.com/adihebbalae/Attacca',
   },
 
-  featured: true,
 
   sections: [
     {

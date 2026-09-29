@@ -1,35 +1,62 @@
 @import "tailwindcss";
 
-/* ===== DESIGN TOKENS ===== */
+/* ===== DESIGN TOKENS =====
+   The identity is the red city in /header.png and the serif AH monogram:
+   maroon on warm paper, a condensed display face for names and headings,
+   and a serif for reading, because the monogram is a serif and paragraphs
+   set in a condensed face were hard to read. Every component reads these
+   variables, so a palette change happens here and nowhere else. */
 :root {
   --color-primary: #880808;
   --color-primary-transparent: #88080854;
   --color-primary-darker: #4a0a0a;
   --color-secondary: #a4b8c4;
-  --color-tertiary: #2d2d2d;
-  --color-tertiary-transparent: #2d2d2d21;
+  --color-tertiary: #231d1f;
   --color-quaternary: #1c1f2a;
   --color-quinary: #7f449a;
-  --color-background: #faf0e6;
-  /* --font-oswald / --font-montserrat are set on <html> by next/font in layout.tsx */
-  --font-primary: var(--font-oswald), sans-serif;
-  --font-display: var(--font-montserrat), sans-serif;
+  --color-background: #f8f1e7;
+  --color-surface: #fffaf3;
+  --color-night: #170b0e;
+  --color-rule: rgba(35, 29, 31, 0.13);
+  /* --font-oswald / --font-serif are set on <html> by next/font in layout.tsx */
+  --font-primary: var(--font-oswald), 'Arial Narrow', sans-serif;
+  --font-display: var(--font-oswald), 'Arial Narrow', sans-serif;
+  --font-body: var(--font-serif), Georgia, serif;
 }
 
-/* ===== BASE ===== */
+/* ===== BASE =====
+   Inside @layer base on purpose: Tailwind v4 utilities live in a cascade
+   layer, and any unlayered rule beats every layered one regardless of
+   specificity. An unlayered h1-h6 color turned text-white headings dark. */
+@layer base {
 html {
   scroll-behavior: smooth;
+  scroll-padding-top: 80px;
 }
 
 body {
-  font-family: var(--font-primary);
+  font-family: var(--font-body);
+  font-size: 17px;
   font-weight: 400;
-  line-height: 1.75;
-  color: #000;
+  line-height: 1.65;
+  color: var(--color-tertiary);
   background: var(--color-background);
   margin: 0;
+  overflow-x: hidden;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+/* ===== HEADINGS =====
+   Sentence case. The old site set every heading and label in tracked caps,
+   which flattened the hierarchy; size and weight carry it now. */
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-display);
+  font-weight: 600;
+  color: var(--color-tertiary);
+  line-height: 1.1;
+}
+
 }
 
 /* ===== SCROLLBAR ===== */
@@ -38,52 +65,16 @@ body {
 ::-webkit-scrollbar-thumb { background: var(--color-primary-transparent); border-radius: 4px; }
 ::-webkit-scrollbar-thumb:hover { background: var(--color-primary); }
 
-/* ===== HEADINGS ===== */
-h1, h2, h3, h4, h5, h6 {
-  font-family: var(--font-primary);
-  font-weight: 700;
-  color: var(--color-tertiary);
-  text-transform: uppercase;
-  line-height: 1.2;
-}
-
 /* ===== SELECTION ===== */
 ::selection {
   background: var(--color-primary);
   color: white;
 }
 
-/* ===== ANIMATIONS ===== */
-@keyframes fadeInHero {
-  from { opacity: 0; transform: translate(-50%, -50%) translateY(20px); }
-  to { opacity: 1; transform: translate(-50%, -50%) translateY(0); }
-}
-
-@keyframes fadeInDelayed {
-  0%, 40% { opacity: 0; transform: translateY(30px); }
-  100% { opacity: 1; transform: translateY(0); }
-}
-
-@keyframes float {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-10px); }
-}
-
-@keyframes pulse {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.5; }
-}
-
 /* ===== ACCESSIBILITY: Focus States ===== */
 *:focus-visible {
   outline: 2px solid var(--color-primary);
-  outline-offset: 2px;
-}
-
-/* ===== PERFORMANCE ===== */
-section {
-  content-visibility: auto;
-  contain-intrinsic-size: auto 500px;
+  outline-offset: 3px;
 }
 
 /* ===== REDUCED MOTION ===== */
@@ -95,4 +86,3 @@ section {
     scroll-behavior: auto !important;
   }
 }
-

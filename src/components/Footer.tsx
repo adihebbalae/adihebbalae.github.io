@@ -1,61 +1,46 @@
-'use client';
-
 import { Github, Linkedin, Mail } from 'lucide-react';
-import { motion } from 'framer-motion';
+import { CONTACT } from '@/data/site';
 
 const socialLinks = [
-  { href: 'mailto:adihebbalae07@gmail.com', label: 'Email', icon: Mail },
-  { href: 'https://github.com/adihebbalae', label: 'GitHub', icon: Github },
-  { href: 'https://www.linkedin.com/in/adi-hebbalae-931165332/', label: 'LinkedIn', icon: Linkedin },
+  { href: `mailto:${CONTACT.email}`, label: CONTACT.email, icon: Mail },
+  { href: CONTACT.github, label: 'GitHub', icon: Github },
+  { href: CONTACT.linkedin, label: 'LinkedIn', icon: Linkedin },
 ];
 
 export default function Footer() {
   const year = new Date().getFullYear();
 
   return (
-    <footer id="contact" className="bg-[var(--color-primary)] text-white">
-      <div className="max-w-[1600px] mx-auto px-6 md:px-16 lg:px-24 py-16 text-center">
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.6 }}
-        >
-          <h2
-            className="text-3xl md:text-4xl font-bold uppercase mb-3 text-white"
-            style={{ fontFamily: 'var(--font-primary)' }}
-          >
-            Adithya Hebbalae
-          </h2>
-          <p className="text-white/70 text-sm md:text-base mb-8 max-w-md mx-auto">
-            Building, learning, and exploring, one project at a time.
-          </p>
+    <footer id="contact" className="bg-[var(--color-primary)] text-white px-5 sm:px-8 md:px-12">
+      <div className="max-w-[1200px] mx-auto py-16 md:py-20">
+        <h2 className="text-white text-[clamp(2.25rem,5vw,3.5rem)] leading-none">Get in touch</h2>
+        <p className="mt-4 max-w-[48ch] text-[17px] text-white/80">
+          Email is the fastest way to reach me. I am looking for internships for summer 2027.
+        </p>
 
-          {/* Social Links */}
-          <div className="flex justify-center gap-4 mb-10">
-            {socialLinks.map((link) => (
-              <a
-                key={link.label}
-                href={link.href}
-                target={link.href.startsWith('mailto') ? undefined : '_blank'}
-                rel={link.href.startsWith('mailto') ? undefined : 'noopener noreferrer'}
-                className="w-10 h-10 rounded-full bg-[var(--color-secondary)] border-2 border-[var(--color-secondary)]
-                           flex items-center justify-center transition-all duration-200
-                           hover:bg-white hover:text-[var(--color-secondary)] group"
-                aria-label={link.label}
-              >
-                <link.icon size={16} className="text-white group-hover:text-[var(--color-secondary)]" />
-              </a>
-            ))}
-          </div>
+        <ul className="mt-8 flex flex-col sm:flex-row flex-wrap gap-3">
+          {socialLinks.map((link) => {
+            const external = !link.href.startsWith('mailto');
+            return (
+              <li key={link.href}>
+                <a
+                  href={link.href}
+                  target={external ? '_blank' : undefined}
+                  rel={external ? 'noopener noreferrer' : undefined}
+                  className="inline-flex items-center gap-2.5 px-4 py-3 rounded-sm border border-white/35 text-[16px]
+                             transition-colors hover:bg-white hover:text-[var(--color-primary)] break-all"
+                >
+                  <link.icon size={17} aria-hidden="true" />
+                  {link.label}
+                </a>
+              </li>
+            );
+          })}
+        </ul>
 
-          {/* Divider */}
-          <div className="border-t border-white/10 pt-4">
-            <p className="text-white/50 text-xs">
-              &copy; {year} Adi Hebbalae. All rights reserved.
-            </p>
-          </div>
-        </motion.div>
+        <p className="mt-14 pt-5 border-t border-white/15 text-[14px] text-white/55">
+          &copy; {year} Adi Hebbalae
+        </p>
       </div>
     </footer>
   );

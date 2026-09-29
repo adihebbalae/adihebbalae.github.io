@@ -5,6 +5,8 @@ import { motion } from 'framer-motion';
 import { ArrowLeft, ExternalLink, Github, Lock } from 'lucide-react';
 import type { Project } from '@/data/types';
 import { useMode } from '@/lib/mode';
+import Navbar from './Navbar';
+import Footer from './Footer';
 
 /**
  * Shared shell for every project page. Pages supply a Project and optional
@@ -25,12 +27,14 @@ export default function ProjectPage({
   const metrics = project.metrics;
 
   return (
-    <main className="min-h-screen pt-28 pb-20 px-6 md:px-16 lg:px-24">
-      <div className="max-w-[900px] mx-auto">
+    <>
+    <Navbar />
+    <main className="min-h-screen pt-28 pb-20 px-5 sm:px-8 md:px-12">
+      <div className="max-w-[760px] mx-auto">
         <Link
           href="/#projects"
-          className="inline-flex items-center gap-2 text-xs uppercase tracking-widest
-                     text-[var(--color-tertiary)]/60 hover:text-[var(--color-primary)]
+          className="inline-flex items-center gap-2 text-[15px]
+                     text-[var(--color-tertiary)]/70 hover:text-[var(--color-primary)]
                      transition-colors mb-10"
         >
           <ArrowLeft size={14} aria-hidden="true" />
@@ -46,8 +50,7 @@ export default function ProjectPage({
             <StatusPill status={project.status} />
             {project.sourcePrivate && (
               <span
-                className="inline-flex items-center gap-1.5 text-[10px] uppercase tracking-widest
-                           font-bold px-3 py-1 rounded-sm bg-[var(--color-tertiary)]/10
+                className="inline-flex items-center gap-1.5 text-[14px] px-3 py-1 rounded-sm bg-[var(--color-tertiary)]/10
                            text-[var(--color-tertiary)]/70"
                 title="Source is private. This page covers architecture and stack only."
               >
@@ -57,7 +60,7 @@ export default function ProjectPage({
             )}
           </div>
 
-          <h1 className="text-3xl md:text-5xl font-bold uppercase text-[var(--color-tertiary)] leading-tight">
+          <h1 className="text-[clamp(2.5rem,7vw,4rem)] leading-[1.02]">
             {project.title}
           </h1>
 
@@ -65,8 +68,8 @@ export default function ProjectPage({
             {project.tagline[mode]}
           </p>
 
-          <p className="mt-6 text-sm uppercase tracking-widest text-[var(--color-tertiary)]/50">
-            {project.role} · {project.period}
+          <p className="mt-6 text-[15px] text-[var(--color-tertiary)]/60">
+            {project.role}, {project.period.replace(' – ', ' to ')}
           </p>
         </motion.header>
 
@@ -76,23 +79,23 @@ export default function ProjectPage({
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 0.5, delay: 0.1 }}
-          className="text-base leading-relaxed text-[var(--color-tertiary)]"
+          className="text-[18px] leading-[1.7] text-[var(--color-tertiary)]"
         >
           {project.summary[mode]}
         </motion.p>
 
         {metrics.length > 0 && (
           <section className="mt-12" aria-label="Key numbers">
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-px bg-[var(--color-tertiary)]/10">
+            <div className="grid grid-cols-2 lg:grid-cols-3 gap-px bg-[var(--color-tertiary)]/10">
               {metrics.map((m) => (
-                <div key={m.label} className="bg-[var(--color-background)] p-5">
+                <div key={m.label} className="bg-[var(--color-surface)] p-5">
                   <div
-                    className="text-2xl font-bold text-[var(--color-primary)]"
-                    style={{ fontFamily: 'var(--font-primary)' }}
+                    className="text-3xl font-semibold text-[var(--color-primary)]"
+                    style={{ fontFamily: 'var(--font-display)' }}
                   >
                     {m.value}
                   </div>
-                  <div className="text-xs text-[var(--color-tertiary)]/60 mt-1 leading-snug">
+                  <div className="text-[14px] text-[var(--color-tertiary)]/65 mt-1 leading-snug">
                     {m.label}
                   </div>
                 </div>
@@ -103,10 +106,10 @@ export default function ProjectPage({
 
         {project.sections?.map((s) => (
           <section key={s.heading} className="mt-12">
-            <h2 className="text-xl font-bold uppercase text-[var(--color-tertiary)] mb-4">
+            <h2 className="text-[1.75rem] mb-4">
               {s.heading}
             </h2>
-            <p className="text-base leading-relaxed text-[var(--color-tertiary)]/85 whitespace-pre-line">
+            <p className="text-[17px] leading-[1.75] text-[var(--color-tertiary)]/90 whitespace-pre-line">
               {s.body}
             </p>
           </section>
@@ -115,12 +118,12 @@ export default function ProjectPage({
         {children}
 
         <section className="mt-12">
-          <h2 className="text-xl font-bold uppercase text-[var(--color-tertiary)] mb-4">Built with</h2>
+          <h2 className="text-[1.75rem] mb-4">Built with</h2>
           <div className="flex flex-wrap gap-2">
             {project.tech.map((t) => (
               <span
                 key={t}
-                className="text-[11px] uppercase tracking-wider font-medium
+                className="text-[14px]
                            border border-[var(--color-tertiary)]/15 text-[var(--color-tertiary)]/70
                            px-3 py-1.5 rounded-sm"
               >
@@ -133,6 +136,8 @@ export default function ProjectPage({
         <ProjectLinks project={project} />
       </div>
     </main>
+    <Footer />
+    </>
   );
 }
 
@@ -144,13 +149,13 @@ function StatusPill({ status }: { status: Project['status'] }) {
     archived: 'bg-[var(--color-tertiary)]/10 text-[var(--color-tertiary)]/55',
   };
   const labels: Record<Project['status'], string> = {
-    live: '● Live',
-    'in-progress': '◐ In progress',
-    complete: '● Complete',
-    archived: '○ Archived',
+    live: 'Live',
+    'in-progress': 'In progress',
+    complete: 'Complete',
+    archived: 'Archived',
   };
   return (
-    <span className={`text-[10px] uppercase tracking-widest font-bold px-3 py-1 rounded-sm ${styles[status]}`}>
+    <span className={`text-[14px] px-3 py-1 rounded-sm ${styles[status]}`}>
       {labels[status]}
     </span>
   );
@@ -186,7 +191,7 @@ function ProjectLinks({ project }: { project: Project }) {
 
 function linkClass(primary: boolean) {
   const base =
-    'inline-flex items-center gap-2 text-xs uppercase tracking-widest font-medium px-5 py-2.5 rounded-sm border transition-all duration-200';
+    'inline-flex items-center gap-2 text-[15px] px-5 py-3 rounded-sm border transition-colors duration-200';
   return primary
     ? `${base} bg-[var(--color-primary)] text-white border-[var(--color-primary)] hover:bg-transparent hover:text-[var(--color-primary)]`
     : `${base} bg-transparent text-[var(--color-tertiary)] border-[var(--color-tertiary)]/25 hover:bg-[var(--color-tertiary)] hover:text-white hover:border-[var(--color-tertiary)]`;

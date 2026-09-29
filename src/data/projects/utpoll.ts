@@ -53,7 +53,6 @@ const utpoll: Project = {
     github: 'https://github.com/adihebbalae/UTPoll',
   },
 
-  featured: true,
 
   sections: [
     {

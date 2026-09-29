@@ -1,213 +1,148 @@
-'use client';
-
-import { useMemo, useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { ArrowRight, ExternalLink, Github } from 'lucide-react';
 import Link from 'next/link';
+import { ArrowUpRight, Github, Lock } from 'lucide-react';
 import { projects } from '@/data';
-import type { Category, Project } from '@/data/types';
-import { useMode } from '@/lib/mode';
+import type { Project } from '@/data/types';
+import SectionHeading from './SectionHeading';
 
-/** Display order for the filter tabs. Only tabs with projects behind them show. */
-const CATEGORY_ORDER: Category[] = [
-  'Research',
-  'ML/AI',
-  'Developer Tools',
-  'Web App',
-  'Embedded',
-  'Civic',
-  'Interactive',
-  'Freelance',
-];
-
-const HEADER = {
-  recruiter: 'Shipped work',
-  builder: 'Building, learning, exploring',
-};
-
+/**
+ * Two tiers, not one grid. Featured projects get a panel each; the rest are a
+ * list, one row per project, so nine projects read as a curated set rather
+ * than a wall of identical cards. The category filter is gone: with nine
+ * projects it hid more than it helped.
+ *
+ * The home page reads the recruiter tagline as the plain "what it is" line.
+ * Project pages stay in the builder voice (see lib/mode.tsx).
+ */
 export default function ProjectsSection() {
-  const { mode } = useMode();
-  const [activeFilter, setActiveFilter] = useState<Category | 'All'>('All');
-
-  const categories = useMemo<(Category | 'All')[]>(() => {
-    const present = new Set(projects.flatMap((p) => p.category));
-    return ['All', ...CATEGORY_ORDER.filter((c) => present.has(c))];
-  }, []);
-
-  const filteredProjects =
-    activeFilter === 'All'
-      ? projects
-      : projects.filter((p) => p.category.includes(activeFilter));
+  const featured = projects.filter((p) => p.featured);
+  const rest = projects.filter((p) => !p.featured);
 
   return (
-    <section id="projects" className="py-20 md:py-28 px-6 md:px-16 lg:px-24">
-      <div className="max-w-[1600px] mx-auto">
-        {/* Section Header */}
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: '-100px' }}
-          transition={{ duration: 0.5 }}
-          className="text-center mb-12"
-        >
-          <h2 className="text-4xl lg:text-5xl font-bold uppercase text-[var(--color-tertiary)]">
-            Projects
-          </h2>
-          <p className="text-sm uppercase tracking-[5px] text-[var(--color-secondary)] mt-2">
-            {HEADER[mode]}
-          </p>
-        </motion.div>
+    <section id="projects" className="px-5 sm:px-8 md:px-12 py-20 md:py-28">
+      <div className="max-w-[1200px] mx-auto">
+        <SectionHeading title="Projects" note="Things I built on my own time, most of them still running." />
 
-        {/* Filter Tabs */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: '-100px' }}
-          transition={{ duration: 0.5, delay: 0.1 }}
-          className="flex flex-wrap justify-center gap-3 mb-12"
-        >
-          {categories.map((cat) => (
-            <button
-              key={cat}
-              onClick={() => setActiveFilter(cat)}
-              aria-pressed={activeFilter === cat}
-              className={`px-5 py-2 text-xs uppercase tracking-widest font-medium border rounded-sm transition-all duration-200 cursor-pointer ${
-                activeFilter === cat
-                  ? 'bg-[var(--color-primary)] text-white border-[var(--color-primary)]'
-                  : 'bg-transparent text-[var(--color-tertiary)] border-[var(--color-tertiary)]/30 hover:border-[var(--color-primary)] hover:text-[var(--color-primary)]'
-              }`}
-            >
-              {cat}
-            </button>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+          {featured.map((p) => (
+            <FeaturedCard key={p.slug} project={p} />
           ))}
-        </motion.div>
-
-        {/* Project Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8">
-          <AnimatePresence mode="popLayout">
-            {filteredProjects.map((project, i) => (
-              <ProjectCard key={project.slug} project={project} index={i} />
-            ))}
-          </AnimatePresence>
         </div>
+
+        <ul className="mt-12 border-t border-[var(--color-rule)]">
+          {rest.map((p) => (
+            <ProjectRow key={p.slug} project={p} />
+          ))}
+        </ul>
       </div>
     </section>
   );
 }
 
-const STATUS_STYLES: Record<Project['status'], string> = {
-  live: 'bg-green-500/10 text-green-600',
-  'in-progress': 'bg-yellow-500/10 text-yellow-600',
-  complete: 'bg-[var(--color-secondary)]/20 text-[var(--color-secondary)]',
-  archived: 'bg-[var(--color-tertiary)]/10 text-[var(--color-tertiary)]/55',
-};
+/** "Mar 2026 – Present" -> "2026". Years only, so the list scans. */
+function year(period: string): string {
+  const years = period.match(/\d{4}/g);
+  if (!years) return period;
+  const first = years[0];
+  const last = years[years.length - 1];
+  return first === last ? first : `${first} to ${last.slice(2)}`;
+}
 
-const STATUS_LABELS: Record<Project['status'], string> = {
-  live: '● Live',
-  'in-progress': '◐ In progress',
-  complete: '● Complete',
-  archived: '○ Archived',
-};
-
-function ProjectCard({ project, index }: { project: Project; index: number }) {
-  const { mode } = useMode();
-  const { live, github } = project.links;
-  const href = `/projects/${project.slug}`;
-
+function StatusDot({ status }: { status: Project['status'] }) {
+  const map: Record<Project['status'], { label: string; color: string }> = {
+    live: { label: 'Live', color: 'bg-green-600' },
+    'in-progress': { label: 'In progress', color: 'bg-amber-500' },
+    complete: { label: 'Complete', color: 'bg-[var(--color-tertiary)]/40' },
+    archived: { label: 'Archived', color: 'bg-[var(--color-tertiary)]/25' },
+  };
+  const s = map[status];
   return (
-    <motion.article
-      layout
-      initial={{ opacity: 0, y: 40 }}
-      animate={{ opacity: 1, y: 0 }}
-      exit={{ opacity: 0, scale: 0.95 }}
-      transition={{ duration: 0.4, delay: index * 0.08 }}
-      className="group relative bg-white rounded-sm border border-black/5 overflow-hidden
-                 shadow-sm hover:shadow-lg transition-all duration-300 hover:-translate-y-1 flex flex-col"
-    >
-      {/* Status Badge */}
-      <div className="absolute top-4 right-4 z-10">
-        <span
-          className={`text-[10px] uppercase tracking-widest font-bold px-3 py-1 rounded-sm ${
-            STATUS_STYLES[project.status]
-          }`}
-        >
-          {STATUS_LABELS[project.status]}
-        </span>
+    <span className="inline-flex items-center gap-2 text-[14px] text-[var(--color-tertiary)]/70">
+      <span aria-hidden="true" className={`w-2 h-2 rounded-full ${s.color}`} />
+      {s.label}
+    </span>
+  );
+}
+
+function FeaturedCard({ project }: { project: Project }) {
+  const href = `/projects/${project.slug}`;
+  return (
+    <article className="group relative flex flex-col bg-[var(--color-surface)] border border-[var(--color-rule)] rounded-sm p-6 md:p-7 transition-colors hover:border-[var(--color-primary)]">
+      <span aria-hidden="true" className="absolute top-0 left-0 right-0 h-[4px] bg-[var(--color-primary)]" />
+      <div className="flex items-center justify-between gap-3">
+        <StatusDot status={project.status} />
+        <span className="text-[14px] text-[var(--color-tertiary)]/55">{year(project.period)}</span>
       </div>
 
-      {/* Card Content */}
-      <div className="p-6 flex flex-col flex-1">
-        <h3 className="text-xl font-bold uppercase text-[var(--color-tertiary)] mb-3 pr-24 leading-tight">
-          <Link href={href} className="hover:text-[var(--color-primary)] transition-colors">
+      <h3 className="mt-5 text-[1.9rem] leading-tight">
+        {/* The stretched link makes the whole card clickable while the
+            external links below stay separately focusable. */}
+        <Link href={href} className="after:absolute after:inset-0 group-hover:text-[var(--color-primary)] transition-colors">
+          {project.title}
+        </Link>
+      </h3>
+      {/* What it is, then the engineering angle. The home page needs the
+          plain description first; the builder line assumes you already know. */}
+      <p className="mt-3 text-[17px] leading-snug text-[var(--color-tertiary)]">{project.tagline.recruiter}</p>
+      <p className="mt-3 text-[15px] leading-relaxed italic text-[var(--color-tertiary)]/65 flex-1">
+        {project.tagline.builder}
+      </p>
+
+      <p className="mt-5 text-[14px] text-[var(--color-tertiary)]/60">{project.tech.slice(0, 4).join(', ')}</p>
+
+      <ExternalLinks project={project} />
+    </article>
+  );
+}
+
+function ProjectRow({ project }: { project: Project }) {
+  const href = `/projects/${project.slug}`;
+  return (
+    <li className="group relative border-b border-[var(--color-rule)]">
+      <div className="grid grid-cols-1 sm:grid-cols-[minmax(0,1fr)_auto] md:grid-cols-[260px_minmax(0,1fr)_auto] gap-x-8 gap-y-1 py-6 items-baseline">
+        <h3 className="text-[1.5rem] leading-tight">
+          <Link href={href} className="after:absolute after:inset-0 group-hover:text-[var(--color-primary)] transition-colors">
             {project.title}
           </Link>
         </h3>
-
-        <p className="text-sm text-[var(--color-tertiary)]/70 leading-relaxed mb-5 flex-1">
-          {project.tagline[mode]}
+        <p className="text-[16px] text-[var(--color-tertiary)]/75 sm:col-start-1 md:col-start-2 sm:row-start-2 md:row-start-1">
+          {project.tagline.recruiter}
         </p>
-
-        {/* Tags */}
-        <div className="flex flex-wrap gap-2 mb-5">
-          {project.tech.map((tag) => (
-            <span
-              key={tag}
-              className="text-[11px] uppercase tracking-wider font-medium
-                         bg-[var(--color-background)] text-[var(--color-tertiary)]/60
-                         px-3 py-1 rounded-sm"
-            >
-              {tag}
-            </span>
-          ))}
-        </div>
-
-        {/* Links. Every card links to its own page; external links are extra. */}
-        <div className="flex flex-wrap gap-3 mt-auto pt-4 border-t border-black/5">
-          <Link
-            href={href}
-            aria-label={`Read about ${project.title}`}
-            className="inline-flex items-center gap-2 text-xs uppercase tracking-widest font-medium
-                       text-[var(--color-primary)] hover:text-white
-                       border border-[var(--color-primary)] px-4 py-2 rounded-sm
-                       transition-all duration-200 hover:bg-[var(--color-primary)]"
-          >
-            <ArrowRight size={12} aria-hidden="true" />
-            Read more
-          </Link>
-
-          {live && (
-            <a
-              href={live}
-              target="_blank"
-              rel="noopener noreferrer"
-              aria-label={`Visit the live site for ${project.title}`}
-              className="inline-flex items-center gap-2 text-xs uppercase tracking-widest font-medium
-                         text-[var(--color-tertiary)] hover:text-white
-                         border border-[var(--color-tertiary)]/30 px-4 py-2 rounded-sm
-                         transition-all duration-200 hover:bg-[var(--color-tertiary)]"
-            >
-              <ExternalLink size={12} aria-hidden="true" />
-              Live
-            </a>
-          )}
-
-          {github && (
-            <a
-              href={github}
-              target="_blank"
-              rel="noopener noreferrer"
-              aria-label={`View ${project.title} on GitHub`}
-              className="inline-flex items-center gap-2 text-xs uppercase tracking-widest font-medium
-                         text-[var(--color-tertiary)] hover:text-white
-                         border border-[var(--color-tertiary)]/30 px-4 py-2 rounded-sm
-                         transition-all duration-200 hover:bg-[var(--color-tertiary)]"
-            >
-              <Github size={12} aria-hidden="true" />
-              GitHub
-            </a>
-          )}
+        <div className="flex items-center gap-4 sm:col-start-2 md:col-start-3 sm:row-start-1 sm:justify-self-end">
+          <span className="text-[14px] text-[var(--color-tertiary)]/55 whitespace-nowrap">{year(project.period)}</span>
+          <ArrowUpRight
+            size={18}
+            aria-hidden="true"
+            className="text-[var(--color-tertiary)]/40 transition-transform group-hover:text-[var(--color-primary)] group-hover:translate-x-0.5 group-hover:-translate-y-0.5"
+          />
         </div>
       </div>
-    </motion.article>
+    </li>
+  );
+}
+
+function ExternalLinks({ project }: { project: Project }) {
+  const { live, github } = project.links;
+  if (!live && !github && !project.sourcePrivate) return null;
+  return (
+    <div className="relative z-10 mt-5 pt-4 border-t border-[var(--color-rule)] flex flex-wrap gap-x-5 gap-y-2 text-[15px]">
+      {live && (
+        <a href={live} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1.5 text-[var(--color-primary)] hover:underline underline-offset-4">
+          <ArrowUpRight size={15} aria-hidden="true" />
+          Visit
+        </a>
+      )}
+      {github && (
+        <a href={github} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1.5 text-[var(--color-tertiary)]/80 hover:text-[var(--color-primary)]">
+          <Github size={15} aria-hidden="true" />
+          Source
+        </a>
+      )}
+      {!github && project.sourcePrivate && (
+        <span className="inline-flex items-center gap-1.5 text-[var(--color-tertiary)]/55">
+          <Lock size={14} aria-hidden="true" />
+          Private source
+        </span>
+      )}
+    </div>
   );
 }

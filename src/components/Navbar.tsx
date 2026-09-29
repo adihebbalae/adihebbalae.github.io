@@ -1,90 +1,81 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
 import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 
+/**
+ * Links are written as /#section so they work from a project page too. On the
+ * home page the browser treats them as same-page anchors and
+ * scroll-padding-top in globals.css keeps the heading clear of this bar.
+ */
 const navLinks = [
-  { href: '/', label: 'Home' },
-  { href: '#about', label: 'About' },
-  { href: '#research', label: 'Research' },
-  { href: '#projects', label: 'Projects' },
-  { href: '#contact', label: 'Contact' },
+  { href: '/#about', label: 'About' },
+  { href: '/#research', label: 'Research' },
+  { href: '/#projects', label: 'Projects' },
+  { href: '/#contact', label: 'Contact' },
 ];
 
 export default function Navbar() {
-  const [isScrolled, setIsScrolled] = useState(false);
+  const pathname = usePathname();
+  const onHome = pathname === '/';
+  const [isScrolled, setIsScrolled] = useState(!onHome);
   const [isMobileOpen, setIsMobileOpen] = useState(false);
 
   useEffect(() => {
-    const handleScroll = () => {
-      setIsScrolled(window.scrollY > 100);
-    };
+    if (!onHome) return;
+    const handleScroll = () => setIsScrolled(window.scrollY > 60);
+    handleScroll();
     window.addEventListener('scroll', handleScroll, { passive: true });
     return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
+  }, [onHome]);
 
   useEffect(() => {
-    if (isMobileOpen) {
-      document.body.style.overflow = 'hidden';
-    } else {
+    document.body.style.overflow = isMobileOpen ? 'hidden' : '';
+    return () => {
       document.body.style.overflow = '';
-    }
-    return () => { document.body.style.overflow = ''; };
+    };
   }, [isMobileOpen]);
 
-  const handleNavClick = (href: string) => {
-    setIsMobileOpen(false);
-    if (href.startsWith('#')) {
-      const el = document.querySelector(href);
-      if (el) {
-        const navbarHeight = 80;
-        const top = el.getBoundingClientRect().top + window.pageYOffset - navbarHeight;
-        window.scrollTo({ top, behavior: 'smooth' });
-      }
-    }
-  };
+  useEffect(() => {
+    if (!isMobileOpen) return;
+    const onKey = (e: KeyboardEvent) => e.key === 'Escape' && setIsMobileOpen(false);
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, [isMobileOpen]);
+
+  const solid = isScrolled || isMobileOpen;
+  const ink = solid ? 'text-[var(--color-tertiary)]' : 'text-white';
 
   return (
     <nav
       aria-label="Main navigation"
-      className={`fixed top-0 left-0 w-full z-50 transition-all duration-300 ${
-        isScrolled
-          ? 'bg-[var(--color-background)] shadow-md border-b border-black/5'
-          : 'bg-transparent'
+      className={`fixed top-0 left-0 w-full z-50 transition-colors duration-300 ${
+        solid
+          ? 'bg-[var(--color-background)]/95 backdrop-blur border-b border-[var(--color-rule)]'
+          : 'bg-transparent border-b border-transparent'
       }`}
     >
-      <div className="max-w-[1600px] mx-auto flex items-center justify-between px-6 md:px-16 lg:px-24 py-4">
-        {/* Logo */}
-        <Link href="/" className="z-50 relative">
+      <div className="max-w-[1200px] mx-auto flex items-center justify-between px-5 sm:px-8 md:px-12 h-16">
+        <Link href="/" className="relative z-50" onClick={() => setIsMobileOpen(false)}>
           <img
             src="/favicon.png"
-            alt="Adithya Hebbalae, home"
-            className={`h-10 md:h-12 object-contain transition-all duration-300 ${
-              !isScrolled && !isMobileOpen ? 'brightness-0 invert' : ''
+            alt="Adi Hebbalae, home"
+            className={`h-10 w-10 object-contain transition-[filter] duration-300 ${
+              solid ? '' : 'brightness-0 invert'
             }`}
           />
         </Link>
 
-        {/* Desktop Nav */}
-        <ul className="hidden lg:flex items-center gap-8">
+        <ul className="hidden md:flex items-center gap-8">
           {navLinks.map((link) => (
             <li key={link.href}>
               <a
                 href={link.href}
-                onClick={(e) => {
-                  if (link.href.startsWith('#')) {
-                    e.preventDefault();
-                    handleNavClick(link.href);
-                  }
-                }}
-                className={`relative text-sm tracking-widest uppercase font-medium transition-colors duration-200
-                  ${isScrolled ? 'text-[var(--color-tertiary)]' : 'text-[var(--color-background)]'}
-                  hover:text-[var(--color-primary)]
-                  after:content-[''] after:absolute after:bottom-[-5px] after:left-1/2 after:h-[2px] after:w-0 
-                  after:-translate-x-1/2 after:transition-all after:duration-200
-                  after:bg-current hover:after:w-full
-                `}
+                className={`text-[15px] font-medium transition-colors hover:text-[var(--color-primary)] ${
+                  solid ? '' : 'hover:text-white/70'
+                } ${ink}`}
+                style={{ fontFamily: 'var(--font-display)', letterSpacing: '0.04em' }}
               >
                 {link.label}
               </a>
@@ -92,74 +83,53 @@ export default function Navbar() {
           ))}
         </ul>
 
-        {/* Mobile Hamburger */}
         <button
-          className="lg:hidden z-50 relative w-10 h-10 flex flex-col items-center justify-center gap-1.5"
+          className="md:hidden relative z-50 w-11 h-11 -mr-2 flex flex-col items-center justify-center gap-1.5"
           onClick={() => setIsMobileOpen(!isMobileOpen)}
-          aria-label="Toggle navigation"
+          aria-label={isMobileOpen ? 'Close menu' : 'Open menu'}
           aria-expanded={isMobileOpen}
+          aria-controls="mobile-menu"
         >
-          <span
-            className={`block h-[2px] w-6 transition-all duration-300 ${
-              isMobileOpen
-                ? 'rotate-45 translate-y-[5px] bg-[var(--color-tertiary)]'
-                : isScrolled ? 'bg-[var(--color-tertiary)]' : 'bg-white'
-            }`}
-          />
-          <span
-            className={`block h-[2px] w-6 transition-all duration-300 ${
-              isMobileOpen
-                ? 'opacity-0'
-                : isScrolled ? 'bg-[var(--color-tertiary)]' : 'bg-white'
-            }`}
-          />
-          <span
-            className={`block h-[2px] w-6 transition-all duration-300 ${
-              isMobileOpen
-                ? '-rotate-45 -translate-y-[5px] bg-[var(--color-tertiary)]'
-                : isScrolled ? 'bg-[var(--color-tertiary)]' : 'bg-white'
-            }`}
-          />
+          {[0, 1, 2].map((i) => (
+            <span
+              key={i}
+              className={`block h-[2px] w-6 transition-all duration-300 ${
+                solid ? 'bg-[var(--color-tertiary)]' : 'bg-white'
+              } ${
+                isMobileOpen
+                  ? i === 0
+                    ? 'rotate-45 translate-y-[8px]'
+                    : i === 1
+                      ? 'opacity-0'
+                      : '-rotate-45 -translate-y-[8px]'
+                  : ''
+              }`}
+            />
+          ))}
         </button>
       </div>
 
-      {/* Mobile Menu */}
-      <AnimatePresence>
-        {isMobileOpen && (
-          <motion.div
-            initial={{ opacity: 0, clipPath: 'inset(0 0 100% 0)' }}
-            animate={{ opacity: 1, clipPath: 'inset(0 0 0 0)' }}
-            exit={{ opacity: 0, clipPath: 'inset(0 0 100% 0)' }}
-            transition={{ duration: 0.4, ease: [0.25, 1, 0.3, 1] }}
-            className="fixed inset-0 bg-[var(--color-background)] z-40 flex flex-col items-start justify-center px-8"
-          >
-            <ul className="flex flex-col gap-8">
-              {navLinks.map((link, i) => (
-                <motion.li
-                  key={link.href}
-                  initial={{ opacity: 0, x: -20 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ delay: 0.1 + i * 0.05 }}
+      {isMobileOpen && (
+        <div
+          id="mobile-menu"
+          className="md:hidden fixed inset-0 top-16 bg-[var(--color-background)] px-5 sm:px-8 pt-8"
+        >
+          <ul className="flex flex-col">
+            {navLinks.map((link) => (
+              <li key={link.href} className="border-b border-[var(--color-rule)]">
+                <a
+                  href={link.href}
+                  onClick={() => setIsMobileOpen(false)}
+                  className="block py-4 text-3xl font-semibold text-[var(--color-tertiary)] hover:text-[var(--color-primary)]"
+                  style={{ fontFamily: 'var(--font-display)' }}
                 >
-                  <a
-                    href={link.href}
-                    onClick={(e) => {
-                      if (link.href.startsWith('#')) {
-                        e.preventDefault();
-                      }
-                      handleNavClick(link.href);
-                    }}
-                    className="text-2xl uppercase tracking-widest font-medium text-[var(--color-tertiary)] hover:text-[var(--color-primary)] transition-colors"
-                  >
-                    {link.label}
-                  </a>
-                </motion.li>
-              ))}
-            </ul>
-
-          </motion.div>
-        )}
-      </AnimatePresence>
+                  {link.label}
+                </a>
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
     </nav>
   );
 }

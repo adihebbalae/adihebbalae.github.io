@@ -36,6 +36,7 @@ const wcii: Project = {
   period: 'Jul 2026 – Present',
   status: 'live',
   depth: 'full',
+  featured: true,
   category: ['Civic', 'Web App'],
 
   tech: [

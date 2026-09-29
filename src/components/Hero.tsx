@@ -1,133 +1,128 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
-import { motion } from 'framer-motion';
+import { motion, useReducedMotion } from 'framer-motion';
+import { Github, Linkedin, Mail } from 'lucide-react';
+import { CONTACT } from '@/data/site';
 
-const SUBTEXT = 'I like building things and solving problems.';
-
+/**
+ * The red city is the site's identity, so it stays full bleed. What changed
+ * is the job of the text on top of it: the old hero said hello and nothing
+ * else, and a visitor had to scroll to learn who this is. Now the first
+ * screen answers that, and carries the three ways to reach him.
+ *
+ * This is the one orchestrated motion on the page. Sections below render
+ * without entrance animations.
+ */
 export default function Hero() {
-  const [loaded, setLoaded] = useState(false);
-  const [failed, setFailed] = useState(false);
-  const imgRef = useRef<HTMLImageElement>(null);
-
-  // Every visible thing in this header is gated on `loaded`, so anything that
-  // stops onLoad from firing leaves the hero blank rather than merely
-  // un-animated. Two ways that happens: a cached image can finish decoding
-  // before React attaches the handler, and a 404 fires onError instead. Check
-  // .complete on mount to cover the first, onError to cover the second.
-  useEffect(() => {
-    const img = imgRef.current;
-    if (!img?.complete) return;
-    if (img.naturalWidth === 0) setFailed(true);
-    setLoaded(true);
-  }, []);
-
-  const scrollToAbout = () => {
-    const el = document.getElementById('about');
-    if (el) {
-      const top = el.getBoundingClientRect().top + window.pageYOffset - 80;
-      window.scrollTo({ top, behavior: 'smooth' });
-    }
-  };
+  const reduce = useReducedMotion();
+  const rise = (delay: number) =>
+    reduce
+      ? {}
+      : {
+          initial: { opacity: 0, y: 18 },
+          animate: { opacity: 1, y: 0 },
+          transition: { duration: 0.8, delay, ease: [0.25, 1, 0.3, 1] as const },
+        };
 
   return (
-    <header className="relative h-screen overflow-hidden bg-[#040913]">
-      {/* Background Image */}
-      <div className="absolute inset-0">
-        <img
-          ref={imgRef}
-          src="/header.png"
-          alt="Portfolio hero background featuring Adithya Hebbalae"
-          className={`w-full h-full object-cover transition-all duration-[2000ms] ease-[cubic-bezier(.25,1,.30,1)] ${
-            loaded && !failed ? 'opacity-100 scale-100' : 'opacity-0 scale-105'
-          }`}
-          onLoad={() => setLoaded(true)}
-          onError={() => {
-            setFailed(true);
-            setLoaded(true);
-          }}
-          fetchPriority="high"
-        />
-        {/* Overlay */}
-        <div
-          className={`absolute inset-0 transition-opacity duration-500 ${
-            loaded ? 'opacity-100' : 'opacity-0'
-          }`}
-          style={{
-            background: 'linear-gradient(0deg, rgba(0,0,0,0.2) 0, rgba(0,0,0,0.2) 30%, rgba(0,0,0,0.2) 73%, rgba(0,0,0,0.6) 100%)',
-            backdropFilter: 'blur(6px)',
-          }}
-        />
-      </div>
+    <header className="relative min-h-[100svh] overflow-hidden bg-[var(--color-night)] flex items-end">
+      <img
+        src="/header.png"
+        alt=""
+        aria-hidden="true"
+        fetchPriority="high"
+        className="absolute inset-0 w-full h-full object-cover object-[center_40%] scale-105 blur-[3px]"
+      />
+      {/* Darkens the lower half so the text reads over the lit windows. */}
+      <div
+        aria-hidden="true"
+        className="absolute inset-0"
+        style={{
+          background:
+            'linear-gradient(180deg, rgba(23,11,14,0.35) 0%, rgba(23,11,14,0.15) 35%, rgba(23,11,14,0.78) 75%, rgba(23,11,14,0.95) 100%)',
+        }}
+      />
 
-      {/* Content */}
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-10 text-center w-full pointer-events-none">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={loaded ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 1.5, ease: 'easeOut' }}
-        >
-          <div className="relative inline-block">
-            {/* The offset accent. It has to be a SIBLING of the tilted box, not a
-                child of it: `-rotate-2` makes that box a stacking context, so a
-                child at -z-10 gets painted behind its own parent's background and
-                never appears at all. Sibling + DOM order needs no z-index. */}
-            <span
-              aria-hidden="true"
-              className="absolute inset-0 -rotate-2 -translate-x-2 translate-y-2"
-              style={{ background: 'var(--color-quinary)', opacity: 0.55 }}
-            />
-            <div
-              className="relative px-6 py-4 md:px-10 md:py-5 -rotate-2"
-              style={{ background: 'var(--color-primary)' }}
-            >
-              <h1
-                className="text-4xl md:text-6xl lg:text-7xl font-bold text-white m-0"
-                style={{
-                  fontFamily: 'var(--font-display)',
-                  textShadow: '0 4px 24px rgba(0,0,0,0.7), 0 1px 2px rgba(0,0,0,0.6)',
-                }}
-              >
-                Hi, I&apos;m Adi
-              </h1>
-            </div>
-          </div>
+      <div className="relative z-10 w-full max-w-[1200px] mx-auto px-5 sm:px-8 md:px-12 pb-14 md:pb-20 pt-32">
+        <motion.div {...rise(0.1)} className="relative inline-block">
+          {/* The tilted plate is the old site's signature and it stays. The
+              offset shadow is a SIBLING of the plate: -rotate-2 makes the plate
+              a stacking context, so a child behind it would never paint. */}
+          <span
+            aria-hidden="true"
+            className="absolute inset-0 -rotate-2 -translate-x-2 translate-y-2 bg-[var(--color-quinary)] opacity-50"
+          />
+          <h1
+            className="relative -rotate-2 bg-[var(--color-primary)] text-white m-0 px-5 py-2 sm:px-7 sm:py-3
+                       text-[clamp(2.75rem,10vw,6.5rem)] leading-[0.95] font-bold"
+          >
+            Adi Hebbalae
+          </h1>
         </motion.div>
 
         <motion.p
-          initial={{ opacity: 0, y: 30 }}
-          animate={loaded ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 1.5, delay: 1.2, ease: 'easeOut' }}
-          className="mt-6 mx-auto max-w-[42rem] px-6 text-lg md:text-xl text-white font-light tracking-wide"
-          style={{
-            fontFamily: 'var(--font-display)',
-            textShadow: '0 2px 12px rgba(0,0,0,0.5), 0 1px 2px rgba(0,0,0,0.4)',
-          }}
+          {...rise(0.45)}
+          className="mt-8 max-w-[34ch] text-[clamp(1.2rem,2.6vw,1.6rem)] leading-snug text-white/95"
         >
-          {SUBTEXT}
+          Electrical and computer engineering at UT Austin. I build research data pipelines in the
+          SWARM Lab, and software that people use.
         </motion.p>
-      </div>
 
-      {/* Scroll Hint */}
-      <motion.div
-        initial={{ opacity: 0, y: 10 }}
-        animate={loaded ? { opacity: 1, y: 0 } : {}}
-        transition={{ duration: 1, delay: 2.5 }}
-        className="absolute bottom-12 left-1/2 -translate-x-1/2 z-10"
-      >
-        <button
-          onClick={scrollToAbout}
-          aria-label="Scroll down to the About me section"
-          className="pointer-events-auto px-6 py-3 text-sm uppercase tracking-widest font-medium
-                     text-white bg-[var(--color-primary)] border border-[var(--color-primary)]
-                     rounded-sm cursor-pointer transition-all duration-200
-                     hover:bg-transparent hover:text-white hover:border-white
-                     focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
-          style={{ fontFamily: 'var(--font-primary)' }}
+        <motion.ul
+          {...rise(0.7)}
+          className="mt-6 flex flex-wrap gap-x-6 gap-y-2 text-[15px] text-white/75"
         >
-          About me
-        </button>
-      </motion.div>
+          <li>
+            Co-author,{' '}
+            <a href="#research" className="text-white underline underline-offset-4 decoration-white/40 hover:decoration-white">
+              CrossView at ECCV 2026
+            </a>
+          </li>
+          {/* Graduation, not class standing: standing goes stale every August. */}
+          <li>BS ECE, expected May 2029</li>
+        </motion.ul>
+
+        <motion.div {...rise(0.9)} className="mt-9 flex flex-wrap gap-3">
+          <a
+            href="#projects"
+            className="inline-flex items-center px-5 py-3 text-[15px] font-medium text-white bg-[var(--color-primary)]
+                       border border-[var(--color-primary)] rounded-sm transition-colors
+                       hover:bg-[var(--color-primary-darker)] hover:border-[var(--color-primary-darker)]"
+            style={{ fontFamily: 'var(--font-display)', letterSpacing: '0.04em' }}
+          >
+            See the work
+          </a>
+          <HeroIcon href={`mailto:${CONTACT.email}`} label="Email Adi" icon={<Mail size={18} />} />
+          <HeroIcon href={CONTACT.github} label="GitHub" icon={<Github size={18} />} external />
+          <HeroIcon href={CONTACT.linkedin} label="LinkedIn" icon={<Linkedin size={18} />} external />
+        </motion.div>
+      </div>
     </header>
+  );
+}
+
+function HeroIcon({
+  href,
+  label,
+  icon,
+  external,
+}: {
+  href: string;
+  label: string;
+  icon: React.ReactNode;
+  external?: boolean;
+}) {
+  return (
+    <a
+      href={href}
+      aria-label={label}
+      title={label}
+      target={external ? '_blank' : undefined}
+      rel={external ? 'noopener noreferrer' : undefined}
+      className="inline-flex items-center justify-center w-12 h-12 rounded-sm text-white
+                 border border-white/30 transition-colors hover:bg-white hover:text-[var(--color-night)]"
+    >
+      {icon}
+    </a>
   );
 }

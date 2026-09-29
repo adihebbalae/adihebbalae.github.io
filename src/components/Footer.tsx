@@ -1,5 +1,6 @@
 import { Github, Linkedin, Mail } from 'lucide-react';
 import { CONTACT } from '@/data/site';
+import SectionHeading from './SectionHeading';
 
 const socialLinks = [
   { href: `mailto:${CONTACT.email}`, label: CONTACT.email, icon: Mail },
@@ -13,12 +14,13 @@ export default function Footer() {
   return (
     <footer id="contact" className="bg-[var(--color-primary)] text-white px-5 sm:px-8 md:px-12">
       <div className="max-w-[1200px] mx-auto py-16 md:py-20">
-        <h2 className="text-white text-[clamp(2.25rem,5vw,3.5rem)] leading-none">Get in touch</h2>
-        <p className="mt-4 max-w-[48ch] text-[17px] text-white/80">
-          Email is the fastest way to reach me. I am looking for internships for summer 2027.
-        </p>
+        <SectionHeading
+          dark
+          title="Say hi"
+          note="Email is the fastest way to reach me. I'm looking for an internship for summer 2027, and I'm always up for talking about any of the things on this page."
+        />
 
-        <ul className="mt-8 flex flex-col sm:flex-row flex-wrap gap-3">
+        <ul className="-mt-2 flex flex-col sm:flex-row flex-wrap gap-3">
           {socialLinks.map((link) => {
             const external = !link.href.startsWith('mailto');
             return (

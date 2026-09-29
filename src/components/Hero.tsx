@@ -56,7 +56,7 @@ export default function Hero() {
             className="relative -rotate-2 bg-[var(--color-primary)] text-white m-0 px-5 py-2 sm:px-7 sm:py-3
                        text-[clamp(2.75rem,10vw,6.5rem)] leading-[0.95] font-bold"
           >
-            Adi Hebbalae
+            Hi, I&apos;m Adi
           </h1>
         </motion.div>
 
@@ -64,14 +64,16 @@ export default function Hero() {
           {...rise(0.45)}
           className="mt-8 max-w-[34ch] text-[clamp(1.2rem,2.6vw,1.6rem)] leading-snug text-white/95"
         >
-          Electrical and computer engineering at UT Austin. I build research data pipelines in the
-          SWARM Lab, and software that people use.
+          I study electrical and computer engineering at UT Austin, build research datasets in
+          the SWARM Lab, and make software that other students actually use.
         </motion.p>
 
+        {/* The full name lives here so the plate above can stay friendly. */}
         <motion.ul
           {...rise(0.7)}
           className="mt-6 flex flex-wrap gap-x-6 gap-y-2 text-[15px] text-white/75"
         >
+          <li className="text-white">Adithya Hebbalae</li>
           <li>
             Co-author,{' '}
             <a href="#research" className="text-white underline underline-offset-4 decoration-white/40 hover:decoration-white">

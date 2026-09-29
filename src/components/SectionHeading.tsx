@@ -1,8 +1,7 @@
 /**
- * Section titles sit on a tilted highlighter plate, the same move as the
- * "Hi, I'm Adi" plate in the hero, so the whole page shares one gesture.
- * The plate is a sibling of the text, not its background, so the rotation
- * tilts the plate without tilting the letters.
+ * Every section opens the same way: a short maroon rule, then the title. The
+ * rule is the only ornament, so the sections read as one document and the
+ * tilted plate stays special to the hero.
  */
 export default function SectionHeading({
   title,
@@ -11,20 +10,16 @@ export default function SectionHeading({
 }: {
   title: string;
   note?: string;
-  /** On a dark or maroon background: a paler plate, white text. */
+  /** On a dark or maroon background: white rule and text. */
   dark?: boolean;
 }) {
   return (
     <div className="mb-10 md:mb-12">
-      <h2 className="relative inline-block px-3 -mx-3 text-[clamp(2.25rem,5vw,3.5rem)] leading-tight">
-        <span
-          aria-hidden="true"
-          className={`absolute inset-x-0 top-[18%] bottom-[4%] -rotate-[1.5deg] ${
-            dark ? 'bg-white/20' : 'bg-[var(--color-primary)]/18'
-          }`}
-        />
-        <span className={`relative ${dark ? 'text-white' : ''}`}>{title}</span>
-      </h2>
+      <span
+        aria-hidden="true"
+        className={`block w-12 h-[5px] mb-5 ${dark ? 'bg-white/70' : 'bg-[var(--color-primary)]'}`}
+      />
+      <h2 className={`text-[clamp(2.25rem,5vw,3.5rem)] leading-none ${dark ? 'text-white' : ''}`}>{title}</h2>
       {note && (
         <p className={`mt-4 max-w-[60ch] text-[17px] ${dark ? 'text-white/80' : 'text-[var(--color-tertiary)]/70'}`}>
           {note}

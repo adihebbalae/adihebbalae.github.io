@@ -1,28 +1,22 @@
 import SectionHeading from './SectionHeading';
 
 /**
- * A character sheet, after andiqu.com, which Adi named as the inspiration.
- * Every value is a corpus fact (Corpus/profile/identity.md and the activity
- * records in Corpus/experiences/). Jokes in his voice are his to write: add a
- * Dislikes or Weaknesses row only with words he supplied, never invented ones.
+ * Plain, friendly prose. Every fact is from the corpus (Corpus/profile/identity.md
+ * and the activity records in Corpus/experiences/).
  *
- * High school is one row on purpose (decision 2026-09-28): activities named,
- * no dates, no pages.
+ * High school is one sentence on purpose (decision 2026-09-28): activities
+ * named, no dates, no pages. A character-sheet version was tried the same day
+ * and rolled back: too close to the site that inspired it, and Adi does not
+ * want a video game aesthetic.
  */
-const SHEET: { key: string; value: string }[] = [
-  { key: 'Name', value: 'Adithya Hebbalae (Adi is fine)' },
-  { key: 'Spawn point', value: 'Saratoga, California' },
-  { key: 'Home base', value: 'Austin, Texas' },
-  { key: 'Class', value: 'Electrical and computer engineer (UT Austin, 2029)' },
-  { key: 'Main quest', value: 'An internship for summer 2027' },
-  { key: 'Side quests', value: 'Research in the SWARM Lab, co-founding the Texas Poker Club' },
-  { key: 'First program', value: 'A Scratch game, at age 8' },
-  {
-    key: 'Previous save file',
-    value:
-      'High school: cross-country and track captain, assistant principal second violin, dance team co-captain and choreographer, geography club co-founder, middle school track coach',
-  },
+const BODY = [
+  'I grew up in Saratoga, California, and now study electrical and computer engineering at UT Austin, mostly computer architecture and embedded systems.',
+  'I started coding at 8, making a game in Scratch. The way I learn has not changed much since: pick something I do not understand, build with it, and find out where it breaks.',
+  'Most of my week goes to the SWARM Lab, working on whether vision-language models can reason across cameras. The rest goes to the projects below and to the Texas Poker Club, which I co-founded.',
 ];
+
+const HIGH_SCHOOL =
+  'In high school I captained cross-country and track, played second violin in the orchestra, co-captained and choreographed for the dance team, co-founded the geography club, and coached middle school track.';
 
 export default function AboutSection() {
   return (
@@ -30,31 +24,12 @@ export default function AboutSection() {
       <div className="max-w-[1200px] mx-auto grid grid-cols-1 md:grid-cols-[minmax(0,1fr)_280px] lg:grid-cols-[minmax(0,1fr)_340px] gap-10 md:gap-16 items-start">
         <div>
           <SectionHeading title="About me" />
-
-          <p className="max-w-[60ch] text-[17px] md:text-[18px] leading-[1.7]">
-            The way I learn has not changed much since that Scratch game: pick something I do not
-            understand, build with it, and find out where it breaks. These days that is mostly
-            computer architecture, embedded systems, and vision-language models.
-          </p>
-
-          <dl className="mt-8 max-w-[62ch] space-y-3 text-[16px] md:text-[17px]">
-            {SHEET.map(({ key, value }) => (
-              <div key={key} className="grid grid-cols-[auto_minmax(0,1fr)] gap-x-2.5">
-                <span aria-hidden="true" className="text-[var(--color-primary)] font-semibold select-none">
-                  &gt;
-                </span>
-                <div>
-                  <dt
-                    className="inline font-semibold"
-                    style={{ fontFamily: 'var(--font-display)', letterSpacing: '0.02em' }}
-                  >
-                    {key}:
-                  </dt>{' '}
-                  <dd className="inline text-[var(--color-tertiary)]/80">{value}</dd>
-                </div>
-              </div>
+          <div className="max-w-[62ch] space-y-5 text-[17px] md:text-[18px] leading-[1.7]">
+            {BODY.map((p) => (
+              <p key={p.slice(0, 32)}>{p}</p>
             ))}
-          </dl>
+            <p className="text-[16px] text-[var(--color-tertiary)]/70">{HIGH_SCHOOL}</p>
+          </div>
         </div>
 
         <figure className="relative max-w-[240px] md:max-w-none md:mt-16">

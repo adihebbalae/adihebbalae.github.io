@@ -20,7 +20,7 @@ export default function ProjectsSection() {
   return (
     <section id="projects" className="px-5 sm:px-8 md:px-12 py-20 md:py-28">
       <div className="max-w-[1200px] mx-auto">
-        <SectionHeading title="Projects" note="Things I built on my own time. Most of them are still up and running, which I count as a win." />
+        <SectionHeading title="Projects" note="Things I built on my own time. Most of them are still running." />
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
           {featured.map((p) => (

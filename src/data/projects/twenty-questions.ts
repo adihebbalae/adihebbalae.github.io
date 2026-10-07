@@ -40,11 +40,7 @@ const twentyQuestions: Project = {
     'd3-hierarchy',
   ],
 
-  metrics: [
-    { value: '38,280', label: 'Bytes in the compiled game.wasm, with an 18,930-byte JavaScript loader' },
-    { value: '12', label: 'C functions exported across the C and JavaScript boundary' },
-    { value: '4', label: 'C files compiled into the WebAssembly build' },
-  ],
+  metrics: [],
 
   links: {
     demo: '/demos/20questions/index.html',

@@ -26,7 +26,7 @@ export function ProjectVideo({ video }: { video: Video }) {
 
 export function ProjectImages({ images }: { images: MediaImage[] }) {
   return (
-    <div className="mt-12 grid gap-8">
+    <div className="mt-12 grid grid-cols-1 gap-8">
       {images.map((m) => (
         <figure key={m.src}>
           {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -81,7 +81,7 @@ const COLORS: Record<Tok['kind'], string | undefined> = {
 
 export function CodeBlocks({ blocks }: { blocks: CodeExcerpt[] }) {
   return (
-    <div className="mt-12 grid gap-8">
+    <div className="mt-12 grid grid-cols-1 gap-8">
       {blocks.map((b) => (
         <figure key={b.caption}>
           <pre

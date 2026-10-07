@@ -74,7 +74,9 @@ const pentris: Project = {
     },
   ],
 
-  links: {},
+  links: {
+    demo: '/demos/pentris/index.html',
+  },
 
   video: {
     embedUrl: 'https://www.youtube-nocookie.com/embed/hFt6jDdBl-I',

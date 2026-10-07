@@ -162,21 +162,27 @@ function StatusPill({ status }: { status: Project['status'] }) {
 }
 
 function ProjectLinks({ project }: { project: Project }) {
-  const { live, github, demo } = project.links;
-  if (!live && !github && !demo) return null;
+  const { live, github, demo, article } = project.links;
+  if (!live && !github && !demo && !article) return null;
 
   return (
     <div className="flex flex-wrap gap-3 mt-12 pt-8 border-t border-[var(--color-tertiary)]/10">
       {demo && (
-        <Link href={demo} className={linkClass(true)}>
+        <a href={demo} className={linkClass(true)}>
           <ExternalLink size={13} aria-hidden="true" />
           Try the demo
-        </Link>
+        </a>
       )}
       {live && (
         <a href={live} target="_blank" rel="noopener noreferrer" className={linkClass(!demo)}>
           <ExternalLink size={13} aria-hidden="true" />
           Visit site
+        </a>
+      )}
+      {article && (
+        <a href={article.url} target="_blank" rel="noopener noreferrer" className={linkClass(false)}>
+          <ExternalLink size={13} aria-hidden="true" />
+          {article.label}
         </a>
       )}
       {github && (

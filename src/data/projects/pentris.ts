@@ -74,9 +74,7 @@ const pentris: Project = {
     },
   ],
 
-  links: {
-    github: 'https://github.com/adihebbalae/319H_Lab',
-  },
+  links: {},
 
   sections: [
     {

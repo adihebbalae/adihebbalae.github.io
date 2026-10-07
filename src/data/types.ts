@@ -35,6 +35,8 @@ export interface Links {
   github?: string;
   /** An interactive demo hosted inside this site, e.g. /projects/x/demo */
   demo?: string;
+  /** A press or write-up link about the project. */
+  article?: { label: string; url: string };
 }
 
 export interface Section {

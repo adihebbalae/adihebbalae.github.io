@@ -25,6 +25,7 @@ import wcii from './projects/wcii';
 import utpoll from './projects/utpoll';
 import neuralgto from './projects/neuralgto';
 import pentris from './projects/pentris';
+import twentyQuestions from './projects/twenty-questions';
 import texasPokerSite from './projects/texas-poker-site';
 import visionLearning from './projects/vision-learning';
 
@@ -36,6 +37,7 @@ export const projects: Project[] = [
   utpoll,
   neuralgto,
   pentris,
+  twentyQuestions,
   texasPokerSite,
   visionLearning,
 ];

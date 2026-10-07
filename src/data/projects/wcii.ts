@@ -64,6 +64,10 @@ const wcii: Project = {
 
   links: {
     live: 'https://wcii.pages.dev',
+    article: {
+      label: 'Read the Daily Texan article',
+      url: 'https://thedailytexan.com/2026/08/23/student-made-app-provides-transparent-rent-reporting/',
+    },
   },
 
   sourcePrivate: true,
@@ -74,7 +78,8 @@ const wcii: Project = {
       body:
         'West Campus is the dense student-housing district next to UT Austin. A small number of operators run most of the buildings, leases get signed months before move-in, and most of the people signing them are signing their first lease. What they have to go on is a review page per building.\n\n' +
         'Reviews are the wrong unit twice over. They attach to a building, so a rebrand resets the record, and they say nothing about a company that runs several other buildings on the same street. Austin publishes the records that would answer those questions: code complaints, 311 requests, permits, occupancy certificates, repeat-offender filings. Those records sit in separate municipal datasets that nobody reads before signing a lease.\n\n' +
-        'WCII puts those records under a different accountability unit: the company that operates a building rather than the building itself. A record aggregates up from the building to the owning entity to the operator, so it survives a rebrand and follows a portfolio.',
+        'WCII puts those records under a different accountability unit: the company that operates a building rather than the building itself. A record aggregates up from the building to the owning entity to the operator, so it survives a rebrand and follows a portfolio.\n\n' +
+        'WCII’s public-records data went to FindMyLease, a UT student housing startup with a founder whose rent survey has 1,600+ users (Aug 2026).',
     },
     {
       heading: 'Where the data comes from',

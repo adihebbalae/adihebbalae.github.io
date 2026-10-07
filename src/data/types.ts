@@ -70,4 +70,33 @@ export interface Project {
   featured?: boolean;
   /** Long-form body for depth: 'full' projects. */
   sections?: Section[];
+  /** Embedded video, rendered near the top of the page when present. */
+  video?: Video;
+  /** Still images with captions, rendered after the sections. */
+  media?: MediaImage[];
+  /** Short code excerpts, rendered as highlighted text. */
+  code?: CodeExcerpt[];
+}
+
+export interface Video {
+  /** Privacy-friendly embed URL, e.g. https://www.youtube-nocookie.com/embed/<id> */
+  embedUrl: string;
+  title: string;
+  caption?: string;
+}
+
+export interface MediaImage {
+  src: string;
+  alt: string;
+  caption: string;
+  width: number;
+  height: number;
+  /** Render with nearest-neighbor scaling (pixel art). */
+  pixelated?: boolean;
+}
+
+export interface CodeExcerpt {
+  caption: string;
+  language: string;
+  code: string;
 }

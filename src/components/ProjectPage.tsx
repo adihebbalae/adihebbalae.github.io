@@ -7,6 +7,7 @@ import type { Project } from '@/data/types';
 import { useMode } from '@/lib/mode';
 import Navbar from './Navbar';
 import Footer from './Footer';
+import { CodeBlocks, ProjectImages, ProjectVideo } from './ProjectMedia';
 
 /**
  * Shared shell for every project page. Pages supply a Project and optional
@@ -84,6 +85,8 @@ export default function ProjectPage({
           {project.summary[mode]}
         </motion.p>
 
+        {project.video && <ProjectVideo video={project.video} />}
+
         {metrics.length > 0 && (
           <section className="mt-12" aria-label="Key numbers">
             <div className="grid grid-cols-2 lg:grid-cols-3 gap-px bg-[var(--color-tertiary)]/10">
@@ -114,6 +117,9 @@ export default function ProjectPage({
             </p>
           </section>
         ))}
+
+        {project.media && project.media.length > 0 && <ProjectImages images={project.media} />}
+        {project.code && project.code.length > 0 && <CodeBlocks blocks={project.code} />}
 
         {children}
 

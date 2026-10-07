@@ -76,6 +76,103 @@ const pentris: Project = {
 
   links: {},
 
+  video: {
+    embedUrl: 'https://www.youtube-nocookie.com/embed/hFt6jDdBl-I',
+    title: 'Pentris running on the handheld',
+    caption: 'Pentris running on the handheld.',
+  },
+
+  media: [
+    {
+      src: '/images/pentris/board-3d-top.webp',
+      alt: 'KiCad 3D render of the top of a green PCB with a joystick, five buttons, an audio jack, a TFT header and a LaunchPad footprint',
+      caption: 'My own board from the ECE 319K PCB camp design exercise, rendered from its KiCad file.',
+      width: 1170,
+      height: 875,
+    },
+    {
+      src: '/images/pentris/board-copper-layers.webp',
+      alt: 'Front and back copper layers of the same board in red and blue with silkscreen outlines',
+      caption: 'The same board, front copper (red), back copper (blue) and silkscreen.',
+      width: 1600,
+      height: 1231,
+    },
+    {
+      src: '/images/pentris/tft-title.png',
+      alt: 'The Pentris title screen with language, music and play-mode menu boxes on a 128 by 160 pixel display',
+      caption: 'Title screen, a frame from the firmware running against a software model of the 128 by 160 TFT.',
+      width: 512,
+      height: 640,
+      pixelated: true,
+    },
+    {
+      src: '/images/pentris/tft-gameplay.png',
+      alt: 'Pentris mid-game with a stack of colored pentominoes and a falling piece',
+      caption: 'Mid-game frame from the same run.',
+      width: 512,
+      height: 640,
+      pixelated: true,
+    },
+  ],
+
+  code: [
+    {
+      language: 'cpp',
+      caption:
+        'Chip-select for the shared display and SD card bus: a depth counter lets nested draw calls hold one assertion. In SPI.cpp, derived from ValvanoWare, copyright Jonathan Valvano, Simplified BSD.',
+      code: `void SPI_StartTransfer(void){
+  if(TFTTransferDepth == 0){
+    while((SPI1->STAT&0x10) == 0x10){}; // wait if SPI busy
+    GPIOB->DOUTCLR31_0 = TFT_CS_PIN;
+  }
+  TFTTransferDepth++;
+}
+
+void SPI_EndTransfer(void){
+  if(TFTTransferDepth == 0){
+    return;
+  }
+  TFTTransferDepth--;
+  if(TFTTransferDepth == 0){
+    while((SPI1->STAT&0x10) == 0x10){}; // wait until all bytes have shifted out
+    GPIOA->DOUTSET31_0 = 1<<13;         // default RS high between transfers
+    GPIOB->DOUTSET31_0 = TFT_CS_PIN;
+  }
+}`,
+    },
+    {
+      language: 'cpp',
+      caption:
+        'The music path of the 11,025 Hz timer interrupt: one 12-bit DAC sample per tick, and a refill queue that the main loop feeds from the SD card.',
+      code: `void SysTick_Handler(void){
+  // ... sound-effect branch omitted ...
+  if(MusicPlaying){
+    uint32_t sample = ((uint32_t)MusicBuf[MusicCurrentBuf][MusicCurrentIndex] << MusicShift);
+    if(sample > 4095U){
+      sample = 4095U;
+    }
+    DAC_Out(sample);
+    MusicCurrentIndex += 1U;
+    if(MusicCurrentIndex >= MUSIC_BUFSIZE){
+      uint8_t finished = MusicCurrentBuf;
+      int8_t next = MusicFindNextReadyBuffer(finished);
+      MusicCurrentIndex = 0;
+      MusicEnqueueEmptyBufferRaw(finished);
+      if(next >= 0){
+        MusicCurrentBuf = (uint8_t)next;
+        MusicBufState[MusicCurrentBuf] = MUSIC_BUF_PLAYING;
+      } else {
+        MusicUnderrunCount++;
+        MusicPlaying = 0;
+        MusicNeedsReset = 1;
+        DAC_Out(2048);
+      }
+    }
+  }
+}`,
+    },
+  ],
+
   sections: [
     {
       heading: 'We took an LED off the board to get better sound',
